@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './lib/firebase';
 import Navigation from './components/Navigation';
+import Footer from './components/Footer';
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Gallery from "./pages/Gallery";
@@ -53,6 +54,7 @@ const App = () => {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
+                  <Footer />
                 </>
               } />
             </Routes>
