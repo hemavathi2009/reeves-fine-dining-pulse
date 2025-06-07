@@ -6,6 +6,7 @@ import { uploadToCloudinary } from '../../lib/cloudinary';
 import { useForm } from 'react-hook-form';
 import { Plus, Edit, Trash2, Upload, Image } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useToast } from '@/hooks/use-toast';
 
 interface MenuItem {
   id: string;
@@ -22,7 +23,6 @@ interface MenuFormData {
   price: string;
   category: string;
   image?: string;
-  imageFile?: FileList;
 }
 
 const MenuManager = () => {
@@ -31,27 +31,41 @@ const MenuManager = () => {
   const [uploading, setUploading] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<MenuFormData>();
+  const { toast } = useToast();
 
   useEffect(() => {
+    console.log('Setting up menu items listener...');
     const unsubscribe = onSnapshot(collection(db, 'menuItems'), (snapshot) => {
       const items = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       })) as MenuItem[];
+      console.log('Menu items updated:', items);
       setMenuItems(items.sort((a, b) => a.name.localeCompare(b.name)));
+    }, (error) => {
+      console.error('Error fetching menu items:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load menu items. Please check your permissions.",
+        variant: "destructive"
+      });
     });
 
     return unsubscribe;
-  }, []);
+  }, [toast]);
 
   const onSubmit = async (data: MenuFormData) => {
     try {
       setUploading(true);
+      console.log('Form data submitted:', data);
+      
       let imageUrl = data.image || '';
       
-      if (data.imageFile && data.imageFile[0]) {
+      // Handle file upload if there's a file
+      const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+      if (fileInput?.files?.[0]) {
         console.log('Uploading image to Cloudinary...');
-        imageUrl = await uploadToCloudinary(data.imageFile[0]);
+        imageUrl = await uploadToCloudinary(fileInput.files[0]);
         console.log('Image uploaded successfully:', imageUrl);
       }
 
@@ -65,23 +79,39 @@ const MenuManager = () => {
         updatedAt: new Date()
       };
 
+      console.log('Preparing to save menu data:', menuData);
+
       if (editingItem) {
-        console.log('Updating menu item:', editingItem.id);
+        console.log('Updating existing menu item:', editingItem.id);
         await updateDoc(doc(db, 'menuItems', editingItem.id), {
           ...menuData,
           updatedAt: new Date()
         });
+        toast({
+          title: "Success",
+          description: "Menu item updated successfully!"
+        });
         setEditingItem(null);
       } else {
         console.log('Adding new menu item...');
-        await addDoc(collection(db, 'menuItems'), menuData);
+        const docRef = await addDoc(collection(db, 'menuItems'), menuData);
+        console.log('Menu item added with ID:', docRef.id);
+        toast({
+          title: "Success",
+          description: "Menu item added successfully!"
+        });
       }
 
       reset();
       setShowForm(false);
-      setUploading(false);
     } catch (error) {
       console.error('Error saving menu item:', error);
+      toast({
+        title: "Error",
+        description: "Failed to save menu item. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
       setUploading(false);
     }
   };
@@ -101,8 +131,17 @@ const MenuManager = () => {
       try {
         await deleteDoc(doc(db, 'menuItems', id));
         console.log('Menu item deleted successfully');
+        toast({
+          title: "Success",
+          description: "Menu item deleted successfully!"
+        });
       } catch (error) {
         console.error('Error deleting menu item:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete menu item. Please try again.",
+          variant: "destructive"
+        });
       }
     }
   };
@@ -201,7 +240,6 @@ const MenuManager = () => {
               <div className="flex items-center space-x-2">
                 <Upload size={16} className="text-amber-400" />
                 <input
-                  {...register('imageFile')}
                   type="file"
                   accept="image/*"
                   className="w-full bg-charcoal border border-amber-600/30 text-cream px-4 py-2 focus:border-amber-400 focus:outline-none file:mr-4 file:py-1 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-amber-600 file:text-black hover:file:bg-amber-700"
@@ -218,7 +256,7 @@ const MenuManager = () => {
                 {uploading ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
-                    <span>Uploading...</span>
+                    <span>Saving...</span>
                   </>
                 ) : (
                   <span>{editingItem ? 'Update Item' : 'Add Item'}</span>
