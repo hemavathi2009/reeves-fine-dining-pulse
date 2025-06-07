@@ -78,10 +78,14 @@ const ReservationManager = () => {
   };
 
   // Helper to generate WhatsApp link
-  const getWhatsAppLink = (phone: string) => {
+  const getWhatsAppLink = (reservation: Reservation) => {
+    // Create professional message for confirming reservation
+    const message = encodeURIComponent(
+      `Hello ${reservation.name},\n\nThis is Reeves Dining. We are reaching out to confirm your reservation for ${reservation.date} at ${reservation.time}.\n\nReservation details:\nGuests: ${reservation.guests}\n${reservation.specialRequests ? `Special Requests: ${reservation.specialRequests}\n` : ""}If you have any changes or questions, please let us know. Kindly reply to confirm your reservation.\n\nThank you!`
+    );
     // Remove non-digit characters and ensure it starts with country code
-    const cleaned = phone.replace(/[^\d+]/g, '');
-    return `https://wa.me/${cleaned}`;
+    const cleaned = reservation.phone.replace(/[^\d+]/g, '');
+    return `https://wa.me/${cleaned}?text=${message}`;
   };
 
   return (
@@ -147,7 +151,7 @@ const ReservationManager = () => {
                         Call
                       </a>
                       <a
-                        href={getWhatsAppLink(reservation.phone)}
+                        href={getWhatsAppLink(reservation)}
                         title="WhatsApp"
                         className="ml-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded flex items-center"
                         style={{ fontSize: 12 }}
@@ -250,7 +254,7 @@ const ReservationManager = () => {
                       Call
                     </a>
                     <a
-                      href={getWhatsAppLink(selectedReservation.phone)}
+                      href={getWhatsAppLink(selectedReservation)}
                       title="WhatsApp"
                       className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded flex items-center"
                       style={{ fontSize: 12 }}

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -188,7 +187,7 @@ const Menu = () => {
                     <div className="flex items-center space-x-1">
                       <Star className="text-amber-400 fill-current" size={16} />
                       <span className="text-amber-400 font-bold text-lg">
-                        ${item.price.toFixed(2)}
+                        ₹{item.price.toFixed(2)}
                       </span>
                     </div>
                   </div>

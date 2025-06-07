@@ -375,7 +375,7 @@ const MenuManager = () => {
             )}
             <h4 className="text-lg font-semibold text-amber-400 mb-2">{item.name}</h4>
             <p className="text-cream text-sm mb-2 line-clamp-2">{item.description}</p>
-            <p className="text-amber-400 font-bold text-lg">${item.price.toFixed(2)}</p>
+            <p className="text-amber-400 font-bold text-lg">₹{item.price.toFixed(2)}</p>
             <p className="text-cream/70 text-sm capitalize mb-4">{item.category}</p>
             
             <div className="flex space-x-2">
