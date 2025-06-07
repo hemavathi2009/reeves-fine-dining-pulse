@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
@@ -7,6 +6,7 @@ import MenuManager from './MenuManager';
 import GalleryManager from './GalleryManager';
 import ReservationManager from './ReservationManager';
 import ContactManager from './ContactManager';
+import AdminPreOrders from '../../AdminPreOrders';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('menu');
@@ -23,6 +23,7 @@ const AdminDashboard = () => {
     { id: 'menu', label: 'Menu Management', icon: '🍽️' },
     { id: 'gallery', label: 'Gallery', icon: '📸' },
     { id: 'reservations', label: 'Reservations', icon: '📅' },
+    { id: 'preorders', label: 'Pre-Orders', icon: '🛒' },
     { id: 'contacts', label: 'Contacts', icon: '📧' },
   ];
 
@@ -76,6 +77,7 @@ const AdminDashboard = () => {
             {activeTab === 'menu' && <MenuManager />}
             {activeTab === 'gallery' && <GalleryManager />}
             {activeTab === 'reservations' && <ReservationManager />}
+            {activeTab === 'preorders' && <AdminPreOrders />}
             {activeTab === 'contacts' && <ContactManager />}
           </motion.div>
         </main>

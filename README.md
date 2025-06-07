@@ -57,3 +57,27 @@ This project is built with:
 ## How can I deploy this project?
 
 You can deploy this project using your preferred deployment platform or service.
+
+# Quick Start
+
+## 1. Clone the repository
+```sh
+git clone <YOUR_GIT_URL>
+cd <YOUR_PROJECT_NAME>
+```
+
+## 2. Install dependencies
+```sh
+npm install
+```
+
+## 3. Start the development server
+```sh
+npm run dev
+```
+
+## 4. Edit code
+Open the project in your IDE and make changes as needed.
+
+## 5. Deploy
+Deploy using your preferred platform.

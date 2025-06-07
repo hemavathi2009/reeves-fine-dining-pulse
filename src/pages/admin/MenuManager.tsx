@@ -231,17 +231,22 @@ const MenuManager = () => {
     );
   }
 
+  // Show current user for debugging
+  // Remove this in production
   return (
     <div className="space-y-8">
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold text-amber-400">Menu Management</h2>
-        <button
-          onClick={() => setShowForm(true)}
-          className="bg-amber-600 hover:bg-amber-700 text-black px-6 py-3 font-semibold transition-colors flex items-center space-x-2"
-        >
-          <Plus size={20} />
-          <span>Add Menu Item</span>
-        </button>
+        <div>
+          <span className="text-xs text-amber-400 mr-4">Logged in as: {user.email}</span>
+          <button
+            onClick={() => setShowForm(true)}
+            className="bg-amber-600 hover:bg-amber-700 text-black px-6 py-3 font-semibold transition-colors flex items-center space-x-2"
+          >
+            <Plus size={20} />
+            <span>Add Menu Item</span>
+          </button>
+        </div>
       </div>
       
       {/* Add/Edit Form */}

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -6,6 +5,11 @@ import { MapPin, Phone, Mail, Clock, Instagram, Facebook, Twitter } from 'lucide
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
+
+  // Scroll to top handler
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <footer className="bg-black border-t border-amber-600/20">
@@ -59,6 +63,7 @@ const Footer = () => {
                   key={link.path}
                   to={link.path}
                   className="text-cream hover:text-amber-400 transition-colors duration-300 hover:translate-x-1 transform"
+                  onClick={scrollToTop}
                 >
                   {link.name}
                 </Link>
@@ -143,13 +148,25 @@ const Footer = () => {
               © {currentYear} Reeves Dining. All rights reserved.
             </p>
             <div className="flex space-x-6 text-sm">
-              <a href="#" className="text-cream/70 hover:text-amber-400 transition-colors">
+              <a
+                href="#"
+                className="text-cream/70 hover:text-amber-400 transition-colors"
+                onClick={e => { e.preventDefault(); scrollToTop(); }}
+              >
                 Privacy Policy
               </a>
-              <a href="#" className="text-cream/70 hover:text-amber-400 transition-colors">
+              <a
+                href="#"
+                className="text-cream/70 hover:text-amber-400 transition-colors"
+                onClick={e => { e.preventDefault(); scrollToTop(); }}
+              >
                 Terms of Service
               </a>
-              <a href="#" className="text-cream/70 hover:text-amber-400 transition-colors">
+              <a
+                href="#"
+                className="text-cream/70 hover:text-amber-400 transition-colors"
+                onClick={e => { e.preventDefault(); scrollToTop(); }}
+              >
                 Cookie Policy
               </a>
             </div>

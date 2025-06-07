@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { db } from '../../lib/firebase';
@@ -39,6 +38,25 @@ const ReservationManager = () => {
 
   const updateReservationStatus = async (id: string, status: 'confirmed' | 'cancelled') => {
     await updateDoc(doc(db, 'reservations', id), { status });
+    if (status === 'confirmed') {
+      const reservation = reservations.find(r => r.id === id);
+      if (reservation) {
+        try {
+          await fetch("/api/sendEmail", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              to: reservation.email,
+              subject: "Your Reservation is Confirmed!",
+              text: `Hello ${reservation.name},\n\nYour reservation for ${reservation.date} at ${reservation.time} has been confirmed by Reeves Dining.\n\nGuests: ${reservation.guests}\n${reservation.specialRequests ? `Special Requests: ${reservation.specialRequests}\n` : ""}\nWe look forward to serving you!\n\nThank you!`
+            })
+          });
+        } catch (e) {
+          // Optionally handle error
+          console.error("Failed to send confirmation email:", e);
+        }
+      }
+    }
   };
 
   const deleteReservation = async (id: string) => {
@@ -57,6 +75,13 @@ const ReservationManager = () => {
       case 'cancelled': return 'text-red-400 bg-red-400/10';
       default: return 'text-amber-400 bg-amber-400/10';
     }
+  };
+
+  // Helper to generate WhatsApp link
+  const getWhatsAppLink = (phone: string) => {
+    // Remove non-digit characters and ensure it starts with country code
+    const cleaned = phone.replace(/[^\d+]/g, '');
+    return `https://wa.me/${cleaned}`;
   };
 
   return (
@@ -110,6 +135,27 @@ const ReservationManager = () => {
                     <div className="flex items-center space-x-2">
                       <Phone size={16} />
                       <span>{reservation.phone}</span>
+                      {/* Call and WhatsApp buttons */}
+                      <a
+                        href={`tel:${reservation.phone}`}
+                        title="Call"
+                        className="ml-2 bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded flex items-center"
+                        style={{ fontSize: 12 }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Call
+                      </a>
+                      <a
+                        href={getWhatsAppLink(reservation.phone)}
+                        title="WhatsApp"
+                        className="ml-1 bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded flex items-center"
+                        style={{ fontSize: 12 }}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        WhatsApp
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -191,7 +237,29 @@ const ReservationManager = () => {
                     <Phone size={16} className="inline mr-2" />
                     Phone
                   </label>
-                  <p className="text-cream">{selectedReservation.phone}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-cream">{selectedReservation.phone}</p>
+                    <a
+                      href={`tel:${selectedReservation.phone}`}
+                      title="Call"
+                      className="bg-green-700 hover:bg-green-800 text-white px-2 py-1 rounded flex items-center"
+                      style={{ fontSize: 12 }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Call
+                    </a>
+                    <a
+                      href={getWhatsAppLink(selectedReservation.phone)}
+                      title="WhatsApp"
+                      className="bg-green-500 hover:bg-green-600 text-white px-2 py-1 rounded flex items-center"
+                      style={{ fontSize: 12 }}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      WhatsApp
+                    </a>
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Sparkles } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
@@ -13,6 +12,7 @@ const Navigation = () => {
     { name: 'Menu', path: '/menu' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'Reservations', path: '/reservations' },
+    { name: 'Pre-Orders', path: '/preorders' },
     { name: 'About', path: '/about' },
     { name: 'Contact', path: '/contact' }
   ];
@@ -22,12 +22,18 @@ const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md border-b border-amber-600/20">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md border-b border-amber-600/20 shadow-lg shadow-amber-900/10">
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-3xl font-serif font-bold text-amber-400 hover:text-amber-300 transition-colors">
-            Reeves Dining
-          </Link>
+          {/* Brand with icon and accent */}
+          <div className="relative flex flex-col items-start">
+            <Link to="/" className="flex items-center gap-2 text-3xl font-serif font-bold text-amber-400 hover:text-amber-300 transition-colors">
+              <Sparkles size={32} className="text-gold drop-shadow-glow" />
+              Reeves Dining
+            </Link>
+            {/* Gold gradient accent bar */}
+            <div className="w-32 h-1 mt-1 rounded-full bg-gradient-to-r from-gold via-amber-400 to-yellow-300 shadow-amber-400/40 shadow-md" />
+          </div>
           
           {/* Desktop Navigation */}
           <div className="hidden lg:flex space-x-8">
