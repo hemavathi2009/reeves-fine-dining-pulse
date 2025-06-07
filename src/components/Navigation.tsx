@@ -1,10 +1,12 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { Menu, X } from 'lucide-react';
 
 const Navigation = () => {
   const location = useLocation();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -15,20 +17,25 @@ const Navigation = () => {
     { name: 'Contact', path: '/contact' }
   ];
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/90 backdrop-blur-md border-b border-amber-600/20">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-md border-b border-amber-600/20">
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-2xl font-bold text-amber-400">
+          <Link to="/" className="text-3xl font-serif font-bold text-amber-400 hover:text-amber-300 transition-colors">
             Reeves Dining
           </Link>
           
-          <div className="hidden md:flex space-x-8">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex space-x-8">
             {navItems.map((item) => (
               <Link
                 key={item.path}
                 to={item.path}
-                className="relative text-cream hover:text-amber-400 transition-colors duration-300"
+                className="relative text-cream hover:text-amber-400 transition-colors duration-300 font-medium"
               >
                 {item.name}
                 {location.pathname === item.path && (
@@ -40,7 +47,43 @@ const Navigation = () => {
               </Link>
             ))}
           </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={toggleMobileMenu}
+            className="lg:hidden text-amber-400 hover:text-amber-300 transition-colors"
+          >
+            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
         </div>
+
+        {/* Mobile Navigation */}
+        <motion.div
+          initial={false}
+          animate={{
+            height: isMobileMenuOpen ? 'auto' : 0,
+            opacity: isMobileMenuOpen ? 1 : 0
+          }}
+          transition={{ duration: 0.3 }}
+          className="lg:hidden overflow-hidden"
+        >
+          <div className="pt-4 pb-2 space-y-2">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                onClick={() => setIsMobileMenuOpen(false)}
+                className={`block py-3 px-4 text-lg font-medium transition-all duration-300 border-l-4 ${
+                  location.pathname === item.path
+                    ? 'text-amber-400 border-amber-400 bg-amber-400/10'
+                    : 'text-cream hover:text-amber-400 border-transparent hover:border-amber-400/50 hover:bg-amber-400/5'
+                }`}
+              >
+                {item.name}
+              </Link>
+            ))}
+          </div>
+        </motion.div>
       </div>
     </nav>
   );

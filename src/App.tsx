@@ -9,6 +9,10 @@ import { auth } from './lib/firebase';
 import Navigation from './components/Navigation';
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
+import Gallery from "./pages/Gallery";
+import Reservations from "./pages/Reservations";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import NotFound from "./pages/NotFound";
@@ -21,7 +25,7 @@ const App = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-charcoal flex items-center justify-center">
-        <div className="text-amber-400 text-xl">Loading...</div>
+        <div className="text-amber-400 text-2xl font-serif">Loading...</div>
       </div>
     );
   }
@@ -43,6 +47,10 @@ const App = () => {
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/menu" element={<Menu />} />
+                    <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/reservations" element={<Reservations />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </>

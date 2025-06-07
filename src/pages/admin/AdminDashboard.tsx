@@ -5,6 +5,8 @@ import { auth } from '../../lib/firebase';
 import { motion } from 'framer-motion';
 import MenuManager from './MenuManager';
 import GalleryManager from './GalleryManager';
+import ReservationManager from './ReservationManager';
+import ContactManager from './ContactManager';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('menu');
@@ -29,10 +31,13 @@ const AdminDashboard = () => {
       {/* Header */}
       <header className="bg-black border-b border-amber-600/20 p-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-amber-400">Reeves Dining Admin</h1>
+          <div>
+            <h1 className="text-3xl font-serif font-bold text-amber-400">Reeves Dining</h1>
+            <p className="text-cream/70">Admin Dashboard</p>
+          </div>
           <button
             onClick={handleSignOut}
-            className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 transition-colors"
+            className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 font-semibold transition-colors"
           >
             Sign Out
           </button>
@@ -41,27 +46,27 @@ const AdminDashboard = () => {
 
       <div className="flex">
         {/* Sidebar */}
-        <aside className="w-64 bg-black/30 border-r border-amber-600/20 min-h-screen p-6">
+        <aside className="w-72 bg-black/30 border-r border-amber-600/20 min-h-screen p-6">
           <nav className="space-y-2">
             {tabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 text-left transition-all duration-300 ${
+                className={`w-full flex items-center space-x-4 px-6 py-4 text-left transition-all duration-300 font-medium ${
                   activeTab === tab.id
                     ? 'bg-amber-600 text-black'
                     : 'text-cream hover:bg-amber-600/20 hover:text-amber-400'
                 }`}
               >
-                <span className="text-xl">{tab.icon}</span>
-                <span>{tab.label}</span>
+                <span className="text-2xl">{tab.icon}</span>
+                <span className="text-lg">{tab.label}</span>
               </button>
             ))}
           </nav>
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-8">
           <motion.div
             key={activeTab}
             initial={{ opacity: 0, x: 20 }}
@@ -70,8 +75,8 @@ const AdminDashboard = () => {
           >
             {activeTab === 'menu' && <MenuManager />}
             {activeTab === 'gallery' && <GalleryManager />}
-            {activeTab === 'reservations' && <div className="text-cream">Reservations Management - Coming Soon</div>}
-            {activeTab === 'contacts' && <div className="text-cream">Contacts Management - Coming Soon</div>}
+            {activeTab === 'reservations' && <ReservationManager />}
+            {activeTab === 'contacts' && <ContactManager />}
           </motion.div>
         </main>
       </div>
