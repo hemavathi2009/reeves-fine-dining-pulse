@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { collection, addDoc, deleteDoc, doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { db } from '../../lib/firebase';
+import { db, auth } from '../../lib/firebase';
 import { uploadToCloudinary } from '../../lib/cloudinary';
 import { useForm } from 'react-hook-form';
-import { Plus, Edit, Trash2, Upload, Image } from 'lucide-react';
+import { Plus, Edit, Trash2, Upload, Image, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useToast } from '@/hooks/use-toast';
+import { useAuthState } from 'react-firebase-hooks/auth';
 
 interface MenuItem {
   id: string;
@@ -32,9 +32,15 @@ const MenuManager = () => {
   const [showForm, setShowForm] = useState(false);
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm<MenuFormData>();
   const { toast } = useToast();
+  const [user, loading] = useAuthState(auth);
 
   useEffect(() => {
-    console.log('Setting up menu items listener...');
+    if (!user) {
+      console.log('No authenticated user found');
+      return;
+    }
+
+    console.log('Setting up menu items listener for user:', user.email);
     const unsubscribe = onSnapshot(collection(db, 'menuItems'), (snapshot) => {
       const items = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -46,18 +52,28 @@ const MenuManager = () => {
       console.error('Error fetching menu items:', error);
       toast({
         title: "Error",
-        description: "Failed to load menu items. Please check your permissions.",
+        description: `Failed to load menu items: ${error.message}`,
         variant: "destructive"
       });
     });
 
     return unsubscribe;
-  }, [toast]);
+  }, [toast, user]);
 
   const onSubmit = async (data: MenuFormData) => {
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in as an admin to perform this action.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     try {
       setUploading(true);
       console.log('Form data submitted:', data);
+      console.log('Current user:', user.email);
       
       let imageUrl = data.image || '';
       
@@ -65,8 +81,17 @@ const MenuManager = () => {
       const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
       if (fileInput?.files?.[0]) {
         console.log('Uploading image to Cloudinary...');
-        imageUrl = await uploadToCloudinary(fileInput.files[0]);
-        console.log('Image uploaded successfully:', imageUrl);
+        try {
+          imageUrl = await uploadToCloudinary(fileInput.files[0]);
+          console.log('Image uploaded successfully:', imageUrl);
+        } catch (uploadError) {
+          console.error('Image upload failed:', uploadError);
+          toast({
+            title: "Upload Error",
+            description: "Failed to upload image. Continuing without image.",
+            variant: "destructive"
+          });
+        }
       }
 
       const menuData = {
@@ -75,6 +100,7 @@ const MenuManager = () => {
         price: parseFloat(data.price),
         category: data.category,
         image: imageUrl,
+        createdBy: user.email,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -104,11 +130,23 @@ const MenuManager = () => {
 
       reset();
       setShowForm(false);
-    } catch (error) {
+      // Clear the file input
+      if (fileInput) {
+        fileInput.value = '';
+      }
+    } catch (error: any) {
       console.error('Error saving menu item:', error);
+      let errorMessage = "Failed to save menu item. Please try again.";
+      
+      if (error.code === 'permission-denied') {
+        errorMessage = "Permission denied. Please ensure you have admin privileges and Firestore rules allow this operation.";
+      } else if (error.code === 'unauthenticated') {
+        errorMessage = "Authentication required. Please log in again.";
+      }
+      
       toast({
         title: "Error",
-        description: "Failed to save menu item. Please try again.",
+        description: errorMessage,
         variant: "destructive"
       });
     } finally {
@@ -127,6 +165,15 @@ const MenuManager = () => {
   };
 
   const handleDelete = async (id: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication Error",
+        description: "You must be logged in as an admin to perform this action.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     if (window.confirm('Are you sure you want to delete this item?')) {
       try {
         await deleteDoc(doc(db, 'menuItems', id));
@@ -135,11 +182,17 @@ const MenuManager = () => {
           title: "Success",
           description: "Menu item deleted successfully!"
         });
-      } catch (error) {
+      } catch (error: any) {
         console.error('Error deleting menu item:', error);
+        let errorMessage = "Failed to delete menu item. Please try again.";
+        
+        if (error.code === 'permission-denied') {
+          errorMessage = "Permission denied. Please check your admin privileges.";
+        }
+        
         toast({
           title: "Error",
-          description: "Failed to delete menu item. Please try again.",
+          description: errorMessage,
           variant: "destructive"
         });
       }
@@ -153,6 +206,30 @@ const MenuManager = () => {
   };
 
   const categories = ['appetizers', 'mains', 'desserts', 'beverages'];
+
+  if (loading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex justify-center items-center py-12">
+          <div className="text-amber-400 text-lg">Loading...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return (
+      <div className="space-y-8">
+        <div className="flex justify-center items-center py-12">
+          <div className="text-center">
+            <AlertCircle className="text-red-400 mx-auto mb-4" size={48} />
+            <h3 className="text-xl font-semibold text-red-400 mb-2">Authentication Required</h3>
+            <p className="text-cream">Please log in as an admin to manage menu items.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

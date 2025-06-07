@@ -1,0 +1,32 @@
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow read access to menu items for everyone
+    match /menuItems/{document} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'reeves@dining.com';
+    }
+    
+    // Allow read access to gallery items for everyone
+    match /gallery/{document} {
+      allow read: if true;
+      allow write: if request.auth != null && request.auth.token.email == 'reeves@dining.com';
+    }
+    
+    // Allow read and write access to reservations for admin
+    match /reservations/{document} {
+      allow read, write: if request.auth != null && request.auth.token.email == 'reeves@dining.com';
+    }
+    
+    // Allow read and write access to contacts for admin
+    match /contacts/{document} {
+      allow read, write: if request.auth != null && request.auth.token.email == 'reeves@dining.com';
+    }
+    
+    // Deny all other reads and writes
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
