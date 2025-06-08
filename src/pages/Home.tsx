@@ -1,297 +1,469 @@
-
-import React from 'react';
-import Hero from '../components/Hero';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useRef } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Star, Award, Clock, Utensils } from 'lucide-react';
+import { 
+  Star, Award, Clock, Utensils, ArrowRight,
+  Coffee, Wine, Calendar, Bookmark, ChefHat, Users
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import HeroSection from '@/components/HeroSection';
 
 const Home = () => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const heroRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll();
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.25], [1, 0]);
+  const textY = useTransform(scrollYProgress, [0, 0.25], [0, 100]);
+  const [activeFeature, setActiveFeature] = useState(0);
+  const [imageLoadErrors, setImageLoadErrors] = useState<Record<number, boolean>>({});
+
+  // Auto-rotate featured items
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveFeature(prev => (prev + 1) % features.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+  
+  // Simulate page loading
+  useEffect(() => {
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 800);
+  }, []);
+
+  // Image error handling function
+  const handleImageError = (index: number) => {
+    setImageLoadErrors(prev => ({...prev, [index]: true}));
+    console.error(`Failed to load image for feature ${index}`);
+  };
+
   const features = [
     {
-      icon: Award,
+      icon: ChefHat,
       title: "Michelin Excellence",
       description: "Recognized for culinary innovation and exceptional service since 2018",
-      color: "from-amber-500 to-yellow-600"
+      color: "from-amber-500 to-yellow-600",
+      bgImage: "bg-[url('https://images.pexels.com/photos/784633/pexels-photo-784633.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&sat=1.2')]",
     },
     {
-      icon: Utensils,
+      icon: Coffee,
       title: "Artisan Cuisine",
       description: "Each dish is meticulously crafted using the finest seasonal ingredients",
-      color: "from-amber-600 to-orange-600"
+      color: "from-amber-600 to-orange-600",
+      bgImage: "bg-[url('https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&sat=1.2')]",
     },
     {
-      icon: Clock,
-      title: "Timeless Tradition",
-      description: "Two decades of refining the art of fine dining and hospitality",
-      color: "from-yellow-500 to-amber-500"
+      icon: Wine,
+      title: "Curated Experience",
+      description: "Personalized dining journey with wine pairings from our master sommelier",
+      color: "from-yellow-500 to-amber-500",
+      bgImage: "bg-[url('https://images.pexels.com/photos/2103949/pexels-photo-2103949.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&sat=1.2')]",
     }
   ];
 
   const testimonials = [
     {
-      text: "An absolutely transcendent dining experience. Every course was a masterpiece.",
+      text: "An absolutely transcendent dining experience. Every course was a masterpiece of flavor and presentation.",
       author: "Sarah Mitchell",
-      rating: 5
+      position: "Food Critic, Gourmet Magazine",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
-      text: "The attention to detail and service quality is unmatched. Truly world-class.",
+      text: "The attention to detail and service quality is unmatched. The chef's tasting menu with wine pairings was revelatory.",
       author: "Michael Chen",
-      rating: 5
+      position: "Executive Chef, Azure Restaurant",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     },
     {
-      text: "Chef Reeves has created something magical here. A must-visit destination.",
+      text: "Chef Reeves has created something magical here. A sensory journey that balances innovation with deep respect for tradition.",
       author: "Isabella Rodriguez",
-      rating: 5
+      position: "Culinary Institute Director",
+      rating: 5,
+      image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80"
     }
   ];
 
-  return (
-    <div className="min-h-screen bg-charcoal">
-      <Hero />
-      
-      {/* About Section */}
-      <section className="py-24 px-6 relative overflow-hidden">
-        <div className="container mx-auto max-w-7xl">
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="grid lg:grid-cols-2 gap-16 items-center"
+  // Page loading animation
+  if (!isLoaded) {
+    return (
+      <div className="fixed inset-0 bg-charcoal flex items-center justify-center z-50">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-center"
+        >
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="text-6xl font-serif font-bold text-amber-400 mb-4"
           >
-            <div className="space-y-8">
-              <motion.h2 
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.2 }}
-                className="text-5xl font-serif font-bold text-amber-400"
-              >
-                Our Legacy
-              </motion.h2>
-              <motion.p 
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.4 }}
-                className="text-cream text-xl leading-relaxed"
-              >
-                For over two decades, Reeves Dining has been a beacon of culinary excellence, 
-                crafting unforgettable experiences through innovative cuisine and impeccable service.
-              </motion.p>
-              <motion.p 
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
-                className="text-cream text-lg leading-relaxed"
-              >
-                Our award-winning chefs source the finest ingredients to create dishes that 
-                celebrate both tradition and creativity, ensuring every meal is a masterpiece that 
-                engages all your senses.
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.8 }}
-              >
-                <Link 
-                  to="/about"
-                  className="inline-block bg-amber-600 hover:bg-amber-700 text-black px-8 py-4 font-bold text-lg transition-all duration-300 hover:scale-105"
-                >
-                  Discover Our Story
-                </Link>
-              </motion.div>
-            </div>
-            
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="relative group"
-            >
-              <div className="relative overflow-hidden">
-                <img 
-                  src="https://images.unsplash.com/photo-1551218808-94e220e084d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-                  alt="Restaurant interior"
-                  className="w-full h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
-              </div>
-              
-              {/* Floating accent elements */}
-              <div className="absolute -top-4 -right-4 w-24 h-24 bg-amber-400/10 backdrop-blur-sm border border-amber-400/30 -z-10"></div>
-              <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-amber-400/5 backdrop-blur-sm border border-amber-400/20 -z-10"></div>
-            </motion.div>
+            Reeves
           </motion.div>
-        </div>
-      </section>
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: 180 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="h-0.5 bg-amber-400 mx-auto"
+          />
+        </motion.div>
+      </div>
+    );
+  }
 
-      {/* Features Section */}
-      <section className="py-24 px-6 bg-black/30 relative">
-        <div className="container mx-auto max-w-7xl">
-          <motion.h2 
+  return (
+    <>
+      {/* Hero Section with professional restaurant image */}
+      <HeroSection 
+        title="Reeves"
+        subtitle="A culinary journey that transcends dining into an art form"
+        videoSrc="https://assets.mixkit.co/videos/preview/mixkit-serving-a-fancy-dinner-in-a-luxurious-restaurant-34633-large.mp4"
+        backgroundImageSrc="https://images.pexels.com/photos/6267/menu-restaurant-vintage-table.jpg?auto=compress&cs=tinysrgb&w=1280&h=720"
+        primaryButtonText="Reserve a Table"
+        primaryButtonLink="/reservations"
+        secondaryButtonText="Explore Menu"
+        secondaryButtonLink="/menu"
+        scrollIndicator={true}
+      />
+      
+      {/* Signature Experiences section - without background images */}
+      <section className="py-24 relative overflow-hidden z-10 bg-gradient-to-b from-black to-charcoal">
+        <div className="container mx-auto px-6">
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-5xl font-serif font-bold text-center text-amber-400 mb-20"
+            className="text-center mb-16"
           >
-            Experience Excellence
-          </motion.h2>
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-amber-400 mb-6">
+              Signature Experiences
+            </h2>
+            <div className="w-24 h-0.5 bg-amber-400/50 mx-auto mb-6"></div>
+            <p className="text-xl text-cream/80 max-w-3xl mx-auto">
+              Discover what makes Reeves a destination for discerning diners worldwide
+            </p>
+          </motion.div>
           
-          <div className="grid lg:grid-cols-3 gap-12">
+          {/* Feature Cards without background images */}
+          <div className="grid md:grid-cols-3 gap-8 relative z-10">
             {features.map((feature, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
-                className="group relative"
+                whileHover={{ y: -10, transition: { duration: 0.3 } }}
+                className={`group ${feature.bgImage} bg-cover bg-center relative overflow-hidden rounded-xl p-8 transition-all duration-300 border-2 ${
+                  activeFeature === index 
+                    ? 'border-amber-400 shadow-lg shadow-amber-500/20' 
+                    : 'border-amber-600/20 hover:border-amber-500/40'
+                }`}
+                onClick={() => setActiveFeature(index)}
               >
-                <div className="text-center p-10 bg-charcoal/70 backdrop-blur-sm border border-amber-600/20 hover:border-amber-600/50 transition-all duration-500 hover:transform hover:scale-105">
-                  <div className={`inline-flex items-center justify-center w-20 h-20 mb-8 bg-gradient-to-br ${feature.color} rounded-full`}>
-                    <feature.icon className="text-white" size={40} />
-                  </div>
-                  <h3 className="text-2xl font-serif font-bold text-amber-400 mb-6">{feature.title}</h3>
-                  <p className="text-cream text-lg leading-relaxed">{feature.description}</p>
-                </div>
+                {/* Overlay for readability */}
+                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] group-hover:bg-black/50 transition-all duration-300"></div>
                 
-                {/* Hover effect background */}
-                <div className="absolute inset-0 bg-gradient-to-br from-amber-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"></div>
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className={`inline-flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-gradient-to-br ${feature.color}`}>
+                    <feature.icon className="text-black" size={30} />
+                  </div>
+                  
+                  <h3 className="text-2xl font-serif font-bold text-amber-400 mb-4">
+                    {feature.title}
+                  </h3>
+                  
+                  <p className="text-cream leading-relaxed mb-6">
+                    {feature.description}
+                  </p>
+                  
+                  <div className="flex items-center gap-2 text-amber-400/70 text-sm font-medium">
+                    <span>Learn More</span>
+                    <ArrowRight size={16} />
+                  </div>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-
-      {/* Menu Preview */}
-      <section className="py-24 px-6">
-        <div className="container mx-auto max-w-7xl">
+      
+      {/* About/Legacy Section */}
+      <section className="py-24 bg-black/30 relative overflow-hidden z-10">
+        <div className="absolute inset-0 -z-10 opacity-20">
+          <svg className="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <radialGradient id="amber-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                <stop offset="0%" stopColor="#d97706" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+            <circle cx="20" cy="20" r="25" fill="url(#amber-gradient)" />
+            <circle cx="80" cy="80" r="35" fill="url(#amber-gradient)" />
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <motion.div
-              initial={{ opacity: 0, x: -50 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="grid grid-cols-2 gap-6"
+              className="relative"
             >
-              <img
-                src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Signature dish"
-                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Wine selection"
-                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500 mt-8"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Dessert"
-                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500 -mt-8"
-              />
-              <img
-                src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                alt="Appetizer"
-                className="w-full h-48 object-cover hover:scale-105 transition-transform duration-500"
-              />
+              <div className="relative z-10 overflow-hidden rounded-xl border-2 border-amber-600/30">
+                <motion.img 
+                  src="https://images.unsplash.com/photo-1551218808-94e220e084d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
+                  alt="Restaurant interior"
+                  className="w-full h-[500px] object-cover hover:scale-105 transition-transform duration-1000"
+                  whileHover={{ scale: 1.05 }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              </div>
+              
+              <div className="absolute -top-8 -left-8 w-64 h-64 border border-amber-600/20 rounded-full -z-10"></div>
+              <div className="absolute -bottom-8 -right-8 w-40 h-40 border border-amber-600/20 rounded-full -z-10"></div>
             </motion.div>
-
+            
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.2 }}
               className="space-y-8"
             >
-              <h2 className="text-5xl font-serif font-bold text-amber-400">
-                Culinary Artistry
+              <Badge className="bg-amber-600/20 text-amber-400 border-amber-400/30 px-4 py-1.5 text-sm rounded-full mb-2">
+                Our Legacy
+              </Badge>
+              
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-amber-400">
+                Crafting Memories Since 2018
               </h2>
-              <p className="text-xl text-cream leading-relaxed">
-                Our seasonal menu showcases the finest ingredients, transformed through 
-                innovative techniques and classical French training into dishes that tell a story.
+              
+              <div className="w-20 h-0.5 bg-amber-600/50"></div>
+              
+              <p className="text-cream text-lg leading-relaxed">
+                For over five years, Reeves has been a beacon of culinary excellence, 
+                crafting unforgettable experiences through innovative cuisine and impeccable service.
               </p>
-              <p className="text-lg text-cream leading-relaxed">
-                From our signature truffle risotto to our renowned chocolate soufflé, 
-                every dish is crafted to create an unforgettable sensory experience.
+              
+              <p className="text-cream/80 leading-relaxed">
+                Our award-winning chefs source the finest ingredients to create dishes that 
+                celebrate both tradition and creativity, ensuring every meal is a masterpiece that 
+                engages all your senses.
               </p>
-              <Link 
-                to="/menu"
-                className="inline-block border-2 border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black px-8 py-4 font-bold text-lg transition-all duration-300 hover:scale-105"
+              
+              <div className="grid grid-cols-2 gap-8 pt-6">
+                <div>
+                  <div className="text-4xl font-serif font-bold text-amber-400 mb-2">
+                    5+
+                  </div>
+                  <div className="text-cream font-medium">
+                    Years of Excellence
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-4xl font-serif font-bold text-amber-400 mb-2">
+                    12
+                  </div>
+                  <div className="text-cream font-medium">
+                    International Awards
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-4xl font-serif font-bold text-amber-400 mb-2">
+                    8
+                  </div>
+                  <div className="text-cream font-medium">
+                    Master Chefs
+                  </div>
+                </div>
+                
+                <div>
+                  <div className="text-4xl font-serif font-bold text-amber-400 mb-2">
+                    200+
+                  </div>
+                  <div className="text-cream font-medium">
+                    Unique Dishes
+                  </div>
+                </div>
+              </div>
+              
+              <Button
+                className="bg-amber-600 hover:bg-amber-700 text-black font-bold px-8 py-6 text-lg mt-8"
+                asChild
               >
-                Explore Our Menu
-              </Link>
+                <Link to="/about">
+                  Our Story <ArrowRight className="ml-2" size={18} />
+                </Link>
+              </Button>
             </motion.div>
           </div>
         </div>
       </section>
-
+      
       {/* Testimonials */}
-      <section className="py-24 px-6 bg-black/30">
-        <div className="container mx-auto max-w-6xl">
-          <motion.h2 
+      <section className="py-24 bg-black/30 relative overflow-hidden z-10">
+        <div className="absolute inset-0 -z-10 opacity-30">
+          <svg className="w-full h-full opacity-50">
+            <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="10" cy="10" r="1" fill="rgba(217, 119, 6, 0.5)" />
+            </pattern>
+            <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+          </svg>
+        </div>
+        
+        <div className="container mx-auto px-6">
+          <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-5xl font-serif font-bold text-center text-amber-400 mb-20"
+            className="text-center mb-16"
           >
-            What Our Guests Say
-          </motion.h2>
+            <Badge className="bg-amber-600/20 text-amber-400 border-amber-400/30 px-4 py-1.5 text-sm rounded-full mb-2">
+              Guest Experiences
+            </Badge>
+            
+            <h2 className="text-4xl md:text-5xl font-serif font-bold text-amber-400 mb-6">
+              What Our Guests Say
+            </h2>
+            
+            <div className="w-24 h-0.5 bg-amber-400/50 mx-auto mb-6"></div>
+          </motion.div>
           
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
-                className="text-center p-8 bg-charcoal/50 backdrop-blur-sm border border-amber-600/20 hover:border-amber-600/40 transition-all duration-300"
+                className="bg-black/50 backdrop-blur-sm border border-amber-600/20 hover:border-amber-500/30 transition-all duration-300 rounded-xl p-8 relative"
               >
-                <div className="flex justify-center mb-6">
+                <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400">
+                  <img 
+                    src={testimonial.image} 
+                    alt={testimonial.author}
+                    className="w-full h-full object-cover" 
+                  />
+                </div>
+                
+                <div className="flex justify-center mb-6 pt-6">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="text-amber-400 fill-current" size={20} />
+                    <Star key={i} className="text-amber-400 fill-current" size={18} />
                   ))}
                 </div>
-                <p className="text-cream text-lg italic mb-6 leading-relaxed">
+                
+                <p className="text-cream text-center italic mb-6 leading-relaxed">
                   "{testimonial.text}"
                 </p>
-                <p className="text-amber-400 font-semibold">
-                  — {testimonial.author}
-                </p>
+                
+                <div className="text-center">
+                  <p className="text-amber-400 font-semibold">
+                    {testimonial.author}
+                  </p>
+                  <p className="text-cream/60 text-sm">
+                    {testimonial.position}
+                  </p>
+                </div>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
-
+      
       {/* CTA Section */}
-      <section className="py-24 px-6">
-        <div className="container mx-auto max-w-4xl text-center">
+      <section className="py-32 relative overflow-hidden z-10">
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+          <img
+            src="https://images.unsplash.com/photo-1508424757105-b6d5ad9329d0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+            alt="Restaurant atmosphere"
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="container mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
             transition={{ duration: 0.8 }}
+            className="max-w-3xl mx-auto text-center"
           >
-            <h2 className="text-5xl font-serif font-bold text-amber-400 mb-8">
-              Ready for an Unforgettable Experience?
+            <Badge className="bg-amber-600/20 text-amber-400 border-amber-400/30 px-4 py-1.5 text-sm rounded-full mb-6">
+              Reserve Your Experience
+            </Badge>
+            
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-amber-400 mb-8">
+              A Table Awaits
             </h2>
+            
             <p className="text-xl text-cream mb-12 leading-relaxed">
               Join us for an evening of culinary excellence in an atmosphere of refined elegance. 
               Reserve your table today and embark on a gastronomic journey like no other.
             </p>
-            <div className="space-x-6">
-              <Link 
-                to="/reservations"
-                className="inline-block bg-amber-600 hover:bg-amber-700 text-black px-10 py-4 font-bold text-lg transition-all duration-300 hover:scale-105"
+            
+            <div className="flex flex-col sm:flex-row gap-6 justify-center mb-12">
+              <Button
+                size="lg"
+                className="bg-amber-600 hover:bg-amber-700 text-black font-bold px-8 py-6 text-lg group"
+                asChild
               >
-                Book Your Table
-              </Link>
-              <Link 
-                to="/contact"
-                className="inline-block border-2 border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black px-10 py-4 font-bold text-lg transition-all duration-300 hover:scale-105"
+                <Link to="/reservations" className="flex items-center">
+                  <Calendar className="mr-2 group-hover:mr-3 transition-all" size={20} />
+                  Book Your Table
+                </Link>
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-2 border-amber-400 text-amber-400 hover:bg-amber-400 hover:text-black font-bold px-8 py-6 text-lg group"
+                asChild
               >
-                Contact Us
-              </Link>
+                <Link to="/contact" className="flex items-center">
+                  <Users className="mr-2 group-hover:mr-3 transition-all" size={20} />
+                  Private Events
+                </Link>
+              </Button>
+            </div>
+            
+            <div className="flex justify-center items-center gap-6">
+              <div className="text-cream">
+                <div className="font-medium">Opening Hours:</div>
+                <div className="text-cream/70 text-sm">Tue-Sun 5PM - 11PM</div>
+              </div>
+              
+              <div className="h-8 w-px bg-amber-600/30"></div>
+              
+              <div className="text-cream">
+                <div className="font-medium">Phone:</div>
+                <div className="text-cream/70 text-sm">+1 (555) 123-4567</div>
+              </div>
+              
+              <div className="h-8 w-px bg-amber-600/30"></div>
+              
+              <div className="text-cream">
+                <div className="font-medium">Location:</div>
+                <div className="text-cream/70 text-sm">123 Gourmet St, New York</div>
+              </div>
             </div>
           </motion.div>
         </div>
       </section>
-    </div>
+    </>
   );
 };
 

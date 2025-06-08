@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './lib/firebase';
 import Navigation from './components/Navigation';
@@ -36,31 +36,29 @@ const App = () => {
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <div className="min-h-screen bg-charcoal text-cream">
-            <Routes>
-              <Route path="/admin" element={
-                user ? <AdminDashboard /> : <AdminLogin />
-              } />
-              <Route path="/*" element={
-                <>
-                  <Navigation />
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/menu" element={<Menu />} />
-                    <Route path="/gallery" element={<Gallery />} />
-                    <Route path="/reservations" element={<Reservations />} />
-                    <Route path="/preorders" element={<PreOrders />} />
-                    <Route path="/about" element={<About />} />
-                    <Route path="/contact" element={<Contact />} />
-                    <Route path="*" element={<NotFound />} />
-                  </Routes>
-                  <Footer />
-                </>
-              } />
-            </Routes>
-          </div>
-        </BrowserRouter>
+        <div className="min-h-screen bg-charcoal text-cream">
+          <Routes>
+            <Route path="/admin" element={
+              user ? <AdminDashboard /> : <AdminLogin />
+            } />
+            <Route path="/*" element={
+              <>
+                <Navigation />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/menu" element={<Menu />} />
+                  <Route path="/gallery" element={<Gallery />} />
+                  <Route path="/reservations" element={<Reservations />} />
+                  <Route path="/preorders" element={<PreOrders />} />
+                  <Route path="/about" element={<About />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+                <Footer />
+              </>
+            } />
+          </Routes>
+        </div>
       </TooltipProvider>
     </QueryClientProvider>
   );
