@@ -2,9 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './lib/firebase';
+import { useEffect } from "react";
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
 import MobileReservationFAB from './components/MobileReservationFAB';
@@ -20,6 +21,17 @@ import NotFound from "./pages/NotFound";
 import PreOrders from "./pages/PreOrders";
 
 const queryClient = new QueryClient();
+
+// ScrollToTop component to handle scroll restoration
+const ScrollToTop = () => {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  
+  return null;
+};
 
 const App = () => {
   const [user, loading] = useAuthState(auth);
@@ -38,6 +50,7 @@ const App = () => {
         <Toaster />
         <Sonner />
         <div className="min-h-screen bg-charcoal text-cream">
+          <ScrollToTop />
           <Routes>
             <Route path="/admin" element={
               user ? <AdminDashboard /> : <AdminLogin />

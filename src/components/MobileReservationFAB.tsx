@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarCheck, X, Phone, Clock } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useMediaQuery } from '@/hooks/use-media-query';
 
 const MobileReservationFAB = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const isMobile = useMediaQuery("(max-width: 768px)");
+  const location = useLocation();
   
   // Don't render on desktop
   if (!isMobile) return null;
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
+  };
+
+  // Add scrollToTop behavior
+  const handleNavigation = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+    setIsExpanded(false);
   };
 
   const fabActions = [
@@ -84,6 +94,7 @@ const MobileReservationFAB = () => {
                   <Link
                     to={action.path}
                     className={`${action.color} rounded-full w-12 h-12 flex items-center justify-center shadow-lg shadow-amber-900/30 text-black`}
+                    onClick={handleNavigation}
                   >
                     <action.icon size={20} />
                   </Link>
