@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -113,7 +112,7 @@ const Contact = () => {
                     <Mail className="text-amber-400 mt-1 flex-shrink-0" size={24} />
                     <div>
                       <h3 className="font-semibold text-amber-400 text-lg mb-2">Email</h3>
-                      <p className="text-cream">hello@reevesdining.com</p>
+                      <p className="text-cream">hello@reeves.com</p>
                       <p className="text-cream/70 text-sm">We'll respond within 24 hours</p>
                     </div>
                   </div>

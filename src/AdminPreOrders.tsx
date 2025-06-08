@@ -200,7 +200,7 @@ const AdminPreOrders = () => {
     ).join('\n');
     
     const message = encodeURIComponent(
-      `Hello ${order.name},\n\nThis is Reeves Dining. We're contacting you about your pre-order #${order.orderId} for ${order.date} at ${order.time}.\n\nOrder details:\n${itemsList}\n\nTotal: ₹${order.total.toFixed(2)}\n\n${order.specialRequests ? `Special Requests: ${order.specialRequests}\n\n` : ""}Please confirm if everything is correct.\n\nThank you!`
+      `Hello ${order.name},\n\nThis is Reeves. We're contacting you about your pre-order #${order.orderId} for ${order.date} at ${order.time}.\n\nOrder details:\n${itemsList}\n\nTotal: ₹${order.total.toFixed(2)}\n\n${order.specialRequests ? `Special Requests: ${order.specialRequests}\n\n` : ""}Please confirm if everything is correct.\n\nThank you!`
     );
     
     const cleaned = order.phone.replace(/[^\d+]/g, '');

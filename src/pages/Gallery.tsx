@@ -254,8 +254,8 @@ const Gallery = () => {
   const shareImage = () => {
     if (selectedImage && navigator.share) {
       navigator.share({
-        title: selectedImage.title || 'Reeves Fine Dining Gallery',
-        text: selectedImage.description || 'Check out this amazing image from Reeves Fine Dining!',
+        title: selectedImage.title || 'Reeves Gallery',
+        text: selectedImage.description || 'Check out this amazing image from Reeves!',
         url: selectedImage.url
       }).catch(error => console.log('Error sharing', error));
     }

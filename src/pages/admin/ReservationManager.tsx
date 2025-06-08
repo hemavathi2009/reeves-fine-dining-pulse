@@ -48,7 +48,7 @@ const ReservationManager = () => {
             body: JSON.stringify({
               to: reservation.email,
               subject: "Your Reservation is Confirmed!",
-              text: `Hello ${reservation.name},\n\nYour reservation for ${reservation.date} at ${reservation.time} has been confirmed by Reeves Dining.\n\nGuests: ${reservation.guests}\n${reservation.specialRequests ? `Special Requests: ${reservation.specialRequests}\n` : ""}\nWe look forward to serving you!\n\nThank you!`
+              text: `Hello ${reservation.name},\n\nYour reservation for ${reservation.date} at ${reservation.time} has been confirmed by Reeves.\n\nGuests: ${reservation.guests}\n${reservation.specialRequests ? `Special Requests: ${reservation.specialRequests}\n` : ""}\nWe look forward to serving you!\n\nThank you!`
             })
           });
         } catch (e) {

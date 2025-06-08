@@ -106,5 +106,58 @@
 .skeleton-loading {
   animation: loading-pulse 1.5s infinite;
   background: linear-gradient(90deg, rgba(217, 119, 6, 0.1) 0%, rgba(251, 191, 36, 0.15) 50%, rgba(217, 119, 6, 0.1) 100%);
-  background-size: 200% 100%;
+}
+
+/* Mobile touch targets */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Mobile-friendly spacing variables */
+:root {
+  --safe-area-inset-top: env(safe-area-inset-top, 0px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 16px);
+  --mobile-spacing-unit: 16px;
+}
+
+/* Safe area handling for notches and home indicators */
+.safe-area-top {
+  padding-top: var(--safe-area-inset-top);
+}
+
+.safe-area-bottom {
+  padding-bottom: var(--safe-area-inset-bottom);
+}
+
+/* Momentum scrolling for iOS */
+.ios-momentum-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile-friendly scrollbars */
+.mobile-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(251, 191, 36, 0.3) transparent;
+}
+
+.mobile-scrollbar::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(251, 191, 36, 0.3);
+  border-radius: 6px;
+}
+
+/* Mobile orientation change transition */
+@media screen and (orientation: landscape) {
+  .orientation-adaptive {
+    transition: height 0.3s, padding 0.3s;
+  }
 }

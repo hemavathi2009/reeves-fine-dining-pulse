@@ -1,4 +1,4 @@
-// Firebase configuration for Reeves Dining
+// Firebase configuration for Reeves
 
 export const firebaseConfig = {
   apiKey: "AIzaSyCLYxW_2qvpkmMy75LJPvMusEnbEzq3jWo",

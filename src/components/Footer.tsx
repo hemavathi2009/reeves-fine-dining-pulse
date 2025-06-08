@@ -23,7 +23,7 @@ const Footer = () => {
             className="space-y-6"
           >
             <Link to="/" className="text-3xl font-serif font-bold text-amber-400">
-              Reeves Dining
+              Reeves
             </Link>
             <p className="text-cream/80 leading-relaxed">
               An exquisite culinary journey where tradition meets innovation. 

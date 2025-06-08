@@ -75,7 +75,7 @@ const AdminDashboard = () => {
               </button>
             )}
             <div>
-              <h1 className="text-xl md:text-3xl font-serif font-bold text-amber-400">Reeves Dining</h1>
+              <h1 className="text-xl md:text-3xl font-serif font-bold text-amber-400">Reeves</h1>
               <p className="text-cream/70 text-sm md:text-base">Admin Dashboard</p>
             </div>
           </div>

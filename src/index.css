@@ -33,8 +33,20 @@
     --cream: 45 29% 92%;
     --gold: 42 89% 55%;
     --amber-dark: 42 89% 45%;
+
+    /* Custom colors for the title bar */
+    --color-gold: #ffc246;
+    --color-cream: #f5f5f5;
+    
+    /* Mobile variables */
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 16px);
+    --safe-area-left: env(safe-area-inset-left, 0px);
+    --safe-area-right: env(safe-area-inset-right, 0px);
+    --vh: 1vh;
   }
 
+  /* Dark mode values */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -63,13 +75,41 @@
     @apply border-border;
   }
   
+  html {
+    -webkit-tap-highlight-color: transparent;
+    height: 100%;
+    overflow-x: hidden;
+  }
+  
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', system-ui, sans-serif;
+    height: 100%;
+    min-height: 100vh; /* Fallback */
+    min-height: calc(var(--vh, 1vh) * 100);
+    overflow-x: hidden;
+    width: 100%;
+  }
+  
+  input, textarea, button, select {
+    font-family: inherit;
+    /* Disable iOS zoom on focus */
+    font-size: 16px;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
+  }
+  
+  /* Mobile enhancements */
+  @media (max-width: 768px) {
+    body {
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    input, textarea, select {
+      font-size: 16px; /* Prevent iOS zoom on input */
+    }
   }
 }
 
@@ -83,7 +123,7 @@
   }
   
   .text-gold {
-    color: hsl(var(--gold));
+    color: var(--color-gold);
   }
   
   .bg-gold {
@@ -95,7 +135,7 @@
   }
   
   .drop-shadow-glow {
-    filter: drop-shadow(0 0 8px hsl(var(--gold)));
+    filter: drop-shadow(0 0 5px rgba(255, 194, 70, 0.5));
   }
   
   /* Mobile optimized utilities */
@@ -103,12 +143,20 @@
     @apply min-h-[44px] min-w-[44px]; /* Minimum 44x44px for proper touch targets */
   }
   
-  .safe-bottom {
-    padding-bottom: env(safe-area-inset-bottom, 16px);
+  .safe-area-bottom {
+    padding-bottom: var(--safe-area-bottom);
   }
   
-  .safe-top {
-    padding-top: env(safe-area-inset-top, 16px);
+  .safe-area-top {
+    padding-top: var(--safe-area-top);
+  }
+  
+  .safe-area-left {
+    padding-left: var(--safe-area-left);
+  }
+  
+  .safe-area-right {
+    padding-right: var(--safe-area-right);
   }
   
   .mobile-scrollbar-hidden {
@@ -120,11 +168,31 @@
     display: none;
   }
   
+  .ios-momentum-scroll {
+    -webkit-overflow-scrolling: touch;
+  }
+  
   .glass-effect {
     @apply backdrop-blur-md bg-black/60 border border-amber-600/20;
   }
   
-  .touch-ripple {
+  .tap-highlight {
     @apply relative overflow-hidden;
+  }
+  
+  /* Height utilities using the --vh custom property */
+  .h-screen-dynamic {
+    height: 100vh; /* Fallback */
+    height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  .min-h-screen-dynamic {
+    min-height: 100vh; /* Fallback */
+    min-height: calc(var(--vh, 1vh) * 100);
+  }
+  
+  /* Prevent rubber-band scrolling on iOS */
+  .overscroll-none {
+    overscroll-behavior: none;
   }
 }

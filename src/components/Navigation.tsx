@@ -51,7 +51,7 @@ const Navigation = () => {
           <div className="relative flex flex-col items-start">
             <Link to="/" className="flex items-center gap-2 text-3xl font-serif font-bold text-amber-400 hover:text-amber-300 transition-colors">
               <Sparkles className="lucide lucide-sparkles text-gold drop-shadow-glow" />
-              Reeves Dining
+              Reeves
             </Link>
             <div className="w-32 h-1 mt-1 rounded-full bg-gradient-to-r from-gold via-amber-400 to-yellow-300 shadow-amber-400/40 shadow-md"></div>
           </div>

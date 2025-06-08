@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '../lib/firebase';
@@ -110,7 +109,7 @@ const Reservations = () => {
                 </div>
                 <div className="space-y-2 text-cream">
                   <p>+1 (555) 123-4567</p>
-                  <p>reservations@reevesdining.com</p>
+                  <p>reservations@reeves.com</p>
                   <p className="text-sm text-cream/70">We'll confirm your reservation within 2 hours</p>
                 </div>
               </div>
