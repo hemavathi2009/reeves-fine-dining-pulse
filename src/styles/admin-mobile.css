@@ -1,0 +1,97 @@
+/* Admin Mobile Styles */
+
+/* Common admin mobile adjustments */
+@media (max-width: 768px) {
+  /* Better card layouts for smaller screens */
+  .admin-card-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Adjust headings for mobile */
+  .admin-heading {
+    font-size: 1.5rem !important;
+  }
+  
+  .admin-subheading {
+    font-size: 1.25rem !important;
+  }
+  
+  /* Table adjustments for mobile */
+  .admin-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Stack form fields on mobile */
+  .admin-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Adjust paddings for better mobile spacing */
+  .admin-section {
+    padding: 1rem !important;
+  }
+  
+  /* Make dropdowns full width on mobile */
+  .admin-dropdown {
+    width: 100% !important;
+  }
+  
+  /* Sticky action buttons on mobile */
+  .admin-mobile-actions {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0.75rem 1rem;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(217, 119, 6, 0.2);
+    z-index: 30;
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  /* Add bottom padding to content to account for sticky actions */
+  .admin-content-with-actions {
+    padding-bottom: 5rem !important;
+  }
+  
+  /* Touch-friendly buttons */
+  .admin-touch-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Transitions for mobile navigation */
+.admin-sidebar-transition {
+  transition: transform 0.3s ease-in-out;
+}
+
+/* Mobile sidebar animations */
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+.admin-sidebar-enter {
+  animation: slideIn 0.3s forwards;
+}
+
+/* Admin dashboard specific mobile adjustments */
+.admin-tabs-mobile {
+  display: flex;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+.admin-tabs-mobile::-webkit-scrollbar {
+  display: none;
+}
+
+.admin-tab-mobile {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
