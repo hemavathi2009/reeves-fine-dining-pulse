@@ -6,6 +6,7 @@ import MenuManager from './MenuManager';
 import GalleryManager from './GalleryManager';
 import ReservationManager from './ReservationManager';
 import ContactManager from './ContactManager';
+import AboutManager from './AboutManager';
 import AdminPreOrders from '../../AdminPreOrders';
 
 const AdminDashboard = () => {
@@ -24,6 +25,7 @@ const AdminDashboard = () => {
     { id: 'gallery', label: 'Gallery', icon: '📸' },
     { id: 'reservations', label: 'Reservations', icon: '📅' },
     { id: 'preorders', label: 'Pre-Orders', icon: '🛒' },
+    { id: 'about', label: 'About Page', icon: '📖' },
     { id: 'contacts', label: 'Contacts', icon: '📧' },
   ];
 
@@ -78,6 +80,7 @@ const AdminDashboard = () => {
             {activeTab === 'gallery' && <GalleryManager />}
             {activeTab === 'reservations' && <ReservationManager />}
             {activeTab === 'preorders' && <AdminPreOrders />}
+            {activeTab === 'about' && <AboutManager />}
             {activeTab === 'contacts' && <ContactManager />}
           </motion.div>
         </main>

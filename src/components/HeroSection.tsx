@@ -27,10 +27,7 @@ const HeroSection = ({
   secondaryButtonLink,
   scrollIndicator = true
 }: HeroSectionProps) => {
-  const [videoLoaded, setVideoLoaded] = useState(false);
   const [videoError, setVideoError] = useState(false);
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const [imageError, setImageError] = useState(false);
 
   // Handle video load errors
   const handleVideoError = () => {
@@ -38,41 +35,22 @@ const HeroSection = ({
     setVideoError(true);
   };
 
-  // Handle video loaded successfully
-  const handleVideoLoaded = () => {
-    setVideoLoaded(true);
-  };
-
-  // Handle image load errors
-  const handleImageError = () => {
-    console.error("Background image failed to load");
-    setImageError(true);
-  };
-
-  // Handle image loaded successfully
-  const handleImageLoaded = () => {
-    setImageLoaded(true);
-  };
-
-  // Fallback background image
-  const fallbackImage = "/images/fallback-hero-bg.jpg";
-
   return (
     <div className="relative h-screen overflow-hidden">
-      {/* Background Media */}
+      {/* Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-black/50 z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/20 to-black/50 z-5"></div>
+        <div className="absolute inset-0 bg-black/60 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/20 to-black/70 z-5"></div>
         
-        {/* Brighter premium restaurant image */}
+        {/* Higher quality background image */}
         <img 
-          src="https://images.pexels.com/photos/67468/pexels-photo-67468.jpeg?auto=compress&cs=tinysrgb&w=1280&h=720&sat=1.2" 
-          alt={title}
-          className="object-cover h-full w-full brightness-110 contrast-105"
+          src="https://images.pexels.com/photos/696218/pexels-photo-696218.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1" 
+          alt="Fine dining atmosphere"
+          className="w-full h-full object-cover"
           loading="eager"
         />
         
-        {/* If video is available and loads successfully, it will play on top of the image */}
+        {/* Video Fallback */}
         {videoSrc && !videoError && (
           <video 
             autoPlay 
@@ -81,17 +59,14 @@ const HeroSection = ({
             playsInline
             className="object-cover h-full w-full"
             onError={handleVideoError}
-            onLoadedData={handleVideoLoaded}
           >
             <source src={videoSrc} type="video/mp4" />
           </video>
         )}
       </div>
       
-      {/* Hero Content */}
-      <motion.div 
-        className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6"
-      >
+      {/* Content */}
+      <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -163,7 +138,7 @@ const HeroSection = ({
             </motion.div>
           </motion.div>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -39,27 +39,28 @@ const Home = () => {
     console.error(`Failed to load image for feature ${index}`);
   };
 
+  // Optimize the feature cards by using CSS backgrounds instead of image loading
   const features = [
     {
       icon: ChefHat,
       title: "Michelin Excellence",
       description: "Recognized for culinary innovation and exceptional service since 2018",
       color: "from-amber-500 to-yellow-600",
-      bgImage: "bg-[url('https://images.pexels.com/photos/784633/pexels-photo-784633.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&sat=1.2')]",
+      bgColor: "bg-amber-950/80", // Fallback color instead of image
     },
     {
       icon: Coffee,
       title: "Artisan Cuisine",
       description: "Each dish is meticulously crafted using the finest seasonal ingredients",
       color: "from-amber-600 to-orange-600",
-      bgImage: "bg-[url('https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&sat=1.2')]",
+      bgColor: "bg-amber-900/80", // Fallback color instead of image
     },
     {
       icon: Wine,
       title: "Curated Experience",
       description: "Personalized dining journey with wine pairings from our master sommelier",
       color: "from-yellow-500 to-amber-500",
-      bgImage: "bg-[url('https://images.pexels.com/photos/2103949/pexels-photo-2103949.jpeg?auto=compress&cs=tinysrgb&w=800&h=600&sat=1.2')]",
+      bgColor: "bg-amber-800/80", // Fallback color instead of image
     }
   ];
 
@@ -117,12 +118,10 @@ const Home = () => {
 
   return (
     <>
-      {/* Hero Section with professional restaurant image */}
+      {/* Hero Section with updated image */}
       <HeroSection 
         title="Reeves"
         subtitle="A culinary journey that transcends dining into an art form"
-        videoSrc="https://assets.mixkit.co/videos/preview/mixkit-serving-a-fancy-dinner-in-a-luxurious-restaurant-34633-large.mp4"
-        backgroundImageSrc="https://images.pexels.com/photos/6267/menu-restaurant-vintage-table.jpg?auto=compress&cs=tinysrgb&w=1280&h=720"
         primaryButtonText="Reserve a Table"
         primaryButtonLink="/reservations"
         secondaryButtonText="Explore Menu"
@@ -130,7 +129,7 @@ const Home = () => {
         scrollIndicator={true}
       />
       
-      {/* Signature Experiences section - without background images */}
+      {/* Signature Experiences Section with background image */}
       <section className="py-24 relative overflow-hidden z-10 bg-gradient-to-b from-black to-charcoal">
         <div className="container mx-auto px-6">
           <motion.div
@@ -149,7 +148,7 @@ const Home = () => {
             </p>
           </motion.div>
           
-          {/* Feature Cards without background images */}
+          {/* Feature Cards - Improved styling with subtle animations */}
           <div className="grid md:grid-cols-3 gap-8 relative z-10">
             {features.map((feature, index) => (
               <motion.div
@@ -158,20 +157,16 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.8, delay: index * 0.2 }}
-                whileHover={{ y: -10, transition: { duration: 0.3 } }}
-                className={`group ${feature.bgImage} bg-cover bg-center relative overflow-hidden rounded-xl p-8 transition-all duration-300 border-2 ${
-                  activeFeature === index 
-                    ? 'border-amber-400 shadow-lg shadow-amber-500/20' 
-                    : 'border-amber-600/20 hover:border-amber-500/40'
-                }`}
-                onClick={() => setActiveFeature(index)}
+                whileHover={{ y: -10, scale: 1.02, transition: { duration: 0.3 } }}
+                className="relative overflow-hidden rounded-xl transition-all duration-500 group"
               >
-                {/* Overlay for readability */}
-                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] group-hover:bg-black/50 transition-all duration-300"></div>
+                {/* Card with gradient overlay */}
+                <div className={`absolute inset-0 ${feature.bgColor} opacity-80 group-hover:opacity-90 transition-opacity duration-500`}></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
                 
                 {/* Content */}
-                <div className="relative z-10">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-gradient-to-br ${feature.color}`}>
+                <div className="relative z-10 p-8">
+                  <div className={`inline-flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-gradient-to-br ${feature.color} transition-transform duration-500 group-hover:scale-110`}>
                     <feature.icon className="text-black" size={30} />
                   </div>
                   
@@ -183,10 +178,13 @@ const Home = () => {
                     {feature.description}
                   </p>
                   
-                  <div className="flex items-center gap-2 text-amber-400/70 text-sm font-medium">
+                  <motion.div 
+                    className="flex items-center gap-2 text-amber-400 text-sm font-medium"
+                    whileHover={{ x: 5 }}
+                  >
                     <span>Learn More</span>
                     <ArrowRight size={16} />
-                  </div>
+                  </motion.div>
                 </div>
               </motion.div>
             ))}
