@@ -28,25 +28,20 @@
     --ring: 222.2 84% 4.9%;
     --radius: 0.5rem;
 
-    /* Custom Restaurant Colors */
+    /* Enhanced Restaurant Colors */
     --charcoal: 210 12% 8%;
     --cream: 45 29% 92%;
     --gold: 42 89% 55%;
     --amber-dark: 42 89% 45%;
+    --amber-light: 42 89% 65%;
 
-    /* Custom colors for the title bar */
+    /* Custom color variables for gradients */
     --color-gold: #ffc246;
+    --color-gold-light: #ffcf6e;
     --color-cream: #f5f5f5;
-    
-    /* Mobile variables */
-    --safe-area-top: env(safe-area-inset-top, 0px);
-    --safe-area-bottom: env(safe-area-inset-bottom, 16px);
-    --safe-area-left: env(safe-area-inset-left, 0px);
-    --safe-area-right: env(safe-area-inset-right, 0px);
-    --vh: 1vh;
+    --gradient-gold: linear-gradient(to right, var(--color-gold), var(--color-gold-light));
   }
 
-  /* Dark mode values */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
@@ -75,41 +70,14 @@
     @apply border-border;
   }
   
-  html {
-    -webkit-tap-highlight-color: transparent;
-    height: 100%;
-    overflow-x: hidden;
-  }
-  
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', system-ui, sans-serif;
-    height: 100%;
-    min-height: 100vh; /* Fallback */
-    min-height: calc(var(--vh, 1vh) * 100);
-    overflow-x: hidden;
-    width: 100%;
-  }
-  
-  input, textarea, button, select {
-    font-family: inherit;
-    /* Disable iOS zoom on focus */
-    font-size: 16px;
+    padding-top: 0; /* Remove default padding as we handle it with the h-[73px] div */
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
-  }
-  
-  /* Mobile enhancements */
-  @media (max-width: 768px) {
-    body {
-      -webkit-overflow-scrolling: touch;
-    }
-    
-    input, textarea, select {
-      font-size: 16px; /* Prevent iOS zoom on input */
-    }
   }
 }
 
@@ -138,25 +106,35 @@
     filter: drop-shadow(0 0 5px rgba(255, 194, 70, 0.5));
   }
   
+  /* Text gradient utility */
+  .text-gradient {
+    @apply bg-clip-text text-transparent;
+  }
+  
+  .bg-gradient-gold {
+    background: var(--gradient-gold);
+  }
+  
+  /* Glass effect utilities */
+  .glassmorphism {
+    @apply backdrop-blur-md bg-black/60 border border-amber-600/20;
+  }
+  
+  .glassmorphism-light {
+    @apply backdrop-blur-sm bg-white/10 border border-white/20;
+  }
+  
   /* Mobile optimized utilities */
   .touch-target {
     @apply min-h-[44px] min-w-[44px]; /* Minimum 44x44px for proper touch targets */
   }
   
-  .safe-area-bottom {
-    padding-bottom: var(--safe-area-bottom);
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
   }
   
-  .safe-area-top {
-    padding-top: var(--safe-area-top);
-  }
-  
-  .safe-area-left {
-    padding-left: var(--safe-area-left);
-  }
-  
-  .safe-area-right {
-    padding-right: var(--safe-area-right);
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 16px);
   }
   
   .mobile-scrollbar-hidden {
@@ -168,31 +146,33 @@
     display: none;
   }
   
-  .ios-momentum-scroll {
-    -webkit-overflow-scrolling: touch;
+  /* Enhanced animated underline effect */
+  .hover-underline {
+    @apply relative;
   }
   
-  .glass-effect {
-    @apply backdrop-blur-md bg-black/60 border border-amber-600/20;
+  .hover-underline::after {
+    content: '';
+    @apply absolute left-0 bottom-0 w-0 h-px bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-300;
   }
   
-  .tap-highlight {
+  .hover-underline:hover::after {
+    @apply w-full;
+  }
+  
+  /* Animation for gradient background */
+  @keyframes gradient-shift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  .animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient-shift 6s ease infinite;
+  }
+  
+  .touch-ripple {
     @apply relative overflow-hidden;
-  }
-  
-  /* Height utilities using the --vh custom property */
-  .h-screen-dynamic {
-    height: 100vh; /* Fallback */
-    height: calc(var(--vh, 1vh) * 100);
-  }
-  
-  .min-h-screen-dynamic {
-    min-height: 100vh; /* Fallback */
-    min-height: calc(var(--vh, 1vh) * 100);
-  }
-  
-  /* Prevent rubber-band scrolling on iOS */
-  .overscroll-none {
-    overscroll-behavior: none;
   }
 }

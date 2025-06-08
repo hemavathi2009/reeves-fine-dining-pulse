@@ -5,17 +5,14 @@ import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../lib/firebase";
 import { signOut } from "firebase/auth";
 import { Button } from "@/components/ui/button";
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { motion } from "framer-motion";
 
 const TitleBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const [user] = useAuthState(auth);
-  
-  // Use media query to detect smaller phones
-  const isSmallPhone = useMediaQuery("(max-width: 360px)");
-  
+
   // Navigation links
   const navLinks = [
     { name: "Home", path: "/" },
@@ -37,28 +34,10 @@ const TitleBar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close menu when route changes
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    if (isMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isMenuOpen]);
-
   // Handle user logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      setIsMenuOpen(false);
     } catch (error) {
       console.error("Error signing out:", error);
     }
@@ -66,22 +45,25 @@ const TitleBar = () => {
 
   return (
     <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 
       border-b ${scrolled ? "border-amber-600/20" : "border-transparent"}
-      ${scrolled ? "bg-gradient-to-r from-black/95 via-charcoal/95 to-black/95 backdrop-blur-md shadow-lg" : ""}`}
+      ${scrolled 
+          ? "bg-gradient-to-r from-black/95 via-charcoal/90 to-black/95 backdrop-blur-md shadow-[0_4px_30px_rgba(0,0,0,0.3)]" 
+          : "bg-gradient-to-r from-black/10 to-transparent"
+      }`}
     >
-      <div className="container mx-auto px-4 sm:px-6">
-        <div className="flex justify-between items-center py-3 sm:py-4">
+      <div className="container mx-auto px-6 py-4">
+        <div className="flex justify-between items-center">
           {/* Logo */}
           <div className="relative flex flex-col items-start">
             <Link 
               to="/" 
-              className="flex items-center gap-2 text-2xl sm:text-3xl font-serif font-bold text-amber-400 hover:text-amber-300 transition-colors"
+              className="flex items-center gap-2 text-3xl font-serif font-bold text-amber-400 hover:text-amber-300 transition-colors"
             >
-              <Sparkles className="lucide lucide-sparkles lucide lucide-sparkles text-gold drop-shadow-glow" />
-              Reeves
+              <Sparkles className="text-gold drop-shadow-[0_0_8px_rgba(255,194,70,0.5)]" />
+              <span className="bg-gradient-to-r from-amber-300 to-amber-500 text-transparent bg-clip-text">Reeves</span>
             </Link>
-            <div className="w-24 sm:w-32 h-1 mt-1 rounded-full bg-gradient-to-r from-gold via-amber-400 to-yellow-300 shadow-amber-400/40 shadow-md"></div>
+            <div className="w-32 h-1 mt-1 rounded-full bg-gradient-to-r from-gold/80 via-amber-400 to-yellow-300 shadow-amber-400/40 shadow-md"></div>
           </div>
 
           {/* Desktop Navigation */}
@@ -90,15 +72,14 @@ const TitleBar = () => {
               <Link
                 key={link.path}
                 to={link.path}
-                className="relative text-cream hover:text-amber-400 transition-colors duration-300 font-medium touch-target"
+                className="relative text-cream hover:text-amber-400 transition-colors duration-300 font-medium group"
               >
                 {link.name}
-                {location.pathname === link.path && (
-                  <div 
-                    className="absolute bottom-[-4px] left-0 right-0 h-0.5 bg-amber-400"
-                    style={{ opacity: 1 }}
-                  ></div>
-                )}
+                <motion.div 
+                  className={`absolute bottom-[-4px] left-0 right-0 h-0.5 bg-gradient-to-r from-amber-400 via-amber-500 to-amber-300 transform origin-left ${
+                    location.pathname === link.path ? "scale-x-100" : "scale-x-0 group-hover:scale-x-75"
+                  } transition-transform duration-300`}
+                ></motion.div>
               </Link>
             ))}
           </div>
@@ -106,60 +87,57 @@ const TitleBar = () => {
           {/* Mobile menu button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden text-amber-400 hover:text-amber-300 transition-colors p-2 touch-target"
-            aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+            className="lg:hidden text-amber-400 hover:text-amber-300 transition-colors"
           >
             <Menu size={28} />
           </button>
         </div>
       </div>
       
-      {/* Mobile Navigation Menu */}
-      <div 
-        className={`fixed inset-0 z-40 bg-black/80 backdrop-blur-md transition-opacity duration-300 lg:hidden ${
-          isMenuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
-        onClick={() => setIsMenuOpen(false)}
-      >
-        <div 
-          className={`absolute top-[58px] sm:top-[72px] right-0 bottom-0 left-0 bg-gradient-to-b from-black/95 to-charcoal/95 transform transition-transform duration-300 overflow-y-auto ios-momentum-scroll safe-area-bottom ${
-            isMenuOpen ? "translate-y-0" : "translate-y-full"
-          }`}
-          onClick={(e) => e.stopPropagation()}
+      {/* Mobile Navigation Menu (only shown when isMenuOpen is true) */}
+      {isMenuOpen && (
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.3 }}
+          className="lg:hidden bg-gradient-to-b from-black/95 via-charcoal/95 to-black/90 backdrop-blur-md border-t border-amber-600/20"
         >
-          <div className="container mx-auto px-6 py-6 space-y-4">
+          <div className="container mx-auto px-6 py-4 space-y-4">
             {navLinks.map((link) => (
               <Link
                 key={link.path}
                 to={link.path}
                 onClick={() => setIsMenuOpen(false)}
-                className={`flex items-center justify-between py-3 text-lg font-medium border-b border-amber-600/20 touch-target ${
+                className={`block py-2 text-lg font-medium ${
                   location.pathname === link.path
-                    ? "text-amber-400" 
+                    ? "text-gradient bg-gradient-to-r from-amber-400 to-yellow-300 bg-clip-text text-transparent" 
                     : "text-cream hover:text-amber-400"
-                } tap-highlight`}
+                }`}
               >
                 {link.name}
-                <div className={`w-2 h-2 rounded-full ${location.pathname === link.path ? "bg-amber-400" : "bg-transparent"}`} />
               </Link>
             ))}
             
             {/* User account options for mobile */}
             {user ? (
-              <div className="pt-6 mt-4 border-t border-amber-600/20">
+              <div className="pt-4 mt-4 border-t border-amber-600/20">
                 <div className="flex items-center gap-3 text-cream mb-4">
-                  <div className="flex-shrink-0 w-10 h-10 bg-amber-600/30 rounded-full flex items-center justify-center">
-                    <User className="text-amber-400" size={18} />
+                  <div className="bg-gradient-to-br from-amber-500 to-amber-700 p-1.5 rounded-full">
+                    <User className="text-black" size={18} />
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-medium truncate">{user.displayName || 'Account'}</div>
-                    <div className="text-xs text-cream/70 truncate">{user.email}</div>
+                  <div>
+                    <div className="font-medium">{user.displayName || 'Account'}</div>
+                    <div className="text-xs text-cream/70">{user.email}</div>
                   </div>
                 </div>
                 <Button
-                  onClick={handleLogout}
+                  onClick={() => {
+                    handleLogout();
+                    setIsMenuOpen(false);
+                  }}
                   variant="outline"
-                  className="w-full border-amber-600/30 text-amber-400 hover:bg-amber-600/10 py-6 touch-target"
+                  className="w-full border-amber-600/30 bg-gradient-to-r from-amber-600/10 to-transparent text-amber-400 hover:bg-amber-600/20"
                 >
                   <LogOut size={16} className="mr-2" />
                   Sign Out
@@ -169,17 +147,14 @@ const TitleBar = () => {
               <Link
                 to="/login"
                 onClick={() => setIsMenuOpen(false)}
-                className="flex justify-center items-center mt-6 pt-6 border-t border-amber-600/20 text-amber-400 font-medium bg-amber-600/20 rounded-lg py-3 hover:bg-amber-600/30 transition-colors touch-target"
+                className="block mt-4 pt-4 border-t border-amber-600/20 text-amber-400 font-medium hover:text-gradient hover:bg-gradient-to-r from-amber-400 to-yellow-300 hover:bg-clip-text hover:text-transparent transition-all"
               >
                 Sign In
               </Link>
             )}
-            
-            {/* Safe Area Spacer */}
-            <div className="h-[var(--safe-area-inset-bottom)]"></div>
           </div>
-        </div>
-      </div>
+        </motion.div>
+      )}
     </nav>
   );
 };

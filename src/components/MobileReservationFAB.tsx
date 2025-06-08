@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CalendarCheck, X, Phone, Clock } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
@@ -11,23 +11,6 @@ const MobileReservationFAB = () => {
   
   // Don't render on desktop
   if (!isMobile) return null;
-
-  // Close FAB menu when route changes
-  useEffect(() => {
-    setIsExpanded(false);
-  }, [location.pathname]);
-  
-  // Close on scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isExpanded) {
-        setIsExpanded(false);
-      }
-    };
-    
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isExpanded]);
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded);
@@ -65,7 +48,7 @@ const MobileReservationFAB = () => {
   ];
 
   return (
-    <div className="fixed right-5 bottom-5 z-50 safe-area-bottom">
+    <div className="fixed right-6 bottom-20 z-50">
       <AnimatePresence>
         {isExpanded && (
           <motion.div 
@@ -87,7 +70,7 @@ const MobileReservationFAB = () => {
                   stiffness: 300,
                   damping: 25
                 }}
-                className="flex items-center gap-3 tap-highlight"
+                className="flex items-center gap-3"
               >
                 {/* Label */}
                 <motion.div
@@ -103,17 +86,15 @@ const MobileReservationFAB = () => {
                 {action.isExternal ? (
                   <a
                     href={action.path}
-                    className={`${action.color} rounded-full w-12 h-12 flex items-center justify-center shadow-lg shadow-amber-900/30 text-black touch-target`}
-                    aria-label={action.label}
+                    className={`${action.color} rounded-full w-12 h-12 flex items-center justify-center shadow-lg shadow-amber-900/30 text-black`}
                   >
                     <action.icon size={20} />
                   </a>
                 ) : (
                   <Link
                     to={action.path}
-                    className={`${action.color} rounded-full w-12 h-12 flex items-center justify-center shadow-lg shadow-amber-900/30 text-black touch-target`}
+                    className={`${action.color} rounded-full w-12 h-12 flex items-center justify-center shadow-lg shadow-amber-900/30 text-black`}
                     onClick={handleNavigation}
-                    aria-label={action.label}
                   >
                     <action.icon size={20} />
                   </Link>
@@ -128,9 +109,7 @@ const MobileReservationFAB = () => {
       <motion.button
         whileTap={{ scale: 0.95 }}
         onClick={toggleExpand}
-        className="bg-amber-500 hover:bg-amber-600 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg shadow-amber-900/30 touch-target"
-        aria-label={isExpanded ? "Close menu" : "Open quick actions menu"}
-        aria-expanded={isExpanded}
+        className="bg-amber-500 hover:bg-amber-600 text-black rounded-full w-14 h-14 flex items-center justify-center shadow-lg shadow-amber-900/30"
       >
         <motion.div
           animate={{ rotate: isExpanded ? 45 : 0 }}
