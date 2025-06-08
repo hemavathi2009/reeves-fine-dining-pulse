@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import './styles/mobile-animations.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -94,5 +95,35 @@
   
   .drop-shadow-glow {
     filter: drop-shadow(0 0 8px hsl(var(--gold)));
+  }
+  
+  /* Mobile optimized utilities */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px]; /* Minimum 44x44px for proper touch targets */
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 16px);
+  }
+  
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 16px);
+  }
+  
+  .mobile-scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .mobile-scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .glass-effect {
+    @apply backdrop-blur-md bg-black/60 border border-amber-600/20;
+  }
+  
+  .touch-ripple {
+    @apply relative overflow-hidden;
   }
 }

@@ -7,6 +7,7 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 import { auth } from './lib/firebase';
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
+import MobileReservationFAB from './components/MobileReservationFAB';
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Gallery from "./pages/Gallery";
@@ -44,16 +45,19 @@ const App = () => {
             <Route path="/*" element={
               <>
                 <Navigation />
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/menu" element={<Menu />} />
-                  <Route path="/gallery" element={<Gallery />} />
-                  <Route path="/reservations" element={<Reservations />} />
-                  <Route path="/preorders" element={<PreOrders />} />
-                  <Route path="/about" element={<About />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
+                <div className="pb-16 md:pb-0"> {/* Add bottom padding for mobile navigation */}
+                  <Routes>
+                    <Route path="/" element={<Home />} />
+                    <Route path="/menu" element={<Menu />} />
+                    <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/reservations" element={<Reservations />} />
+                    <Route path="/preorders" element={<PreOrders />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </div>
+                <MobileReservationFAB />
                 <Footer />
               </>
             } />
