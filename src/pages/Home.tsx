@@ -8,6 +8,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import HeroSection from '@/components/HeroSection';
+import SignatureExperiences from '@/components/SignatureExperiences';
 
 const Home = () => {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -129,68 +130,8 @@ const Home = () => {
         scrollIndicator={true}
       />
       
-      {/* Signature Experiences Section with background image */}
-      <section className="py-24 relative overflow-hidden z-10 bg-gradient-to-b from-black to-charcoal">
-        <div className="container mx-auto px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl md:text-5xl font-serif font-bold text-amber-400 mb-6">
-              Signature Experiences
-            </h2>
-            <div className="w-24 h-0.5 bg-amber-400/50 mx-auto mb-6"></div>
-            <p className="text-xl text-cream/80 max-w-3xl mx-auto">
-              Discover what makes Reeves a destination for discerning diners worldwide
-            </p>
-          </motion.div>
-          
-          {/* Feature Cards - Improved styling with subtle animations */}
-          <div className="grid md:grid-cols-3 gap-8 relative z-10">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                whileHover={{ y: -10, scale: 1.02, transition: { duration: 0.3 } }}
-                className="relative overflow-hidden rounded-xl transition-all duration-500 group"
-              >
-                {/* Card with gradient overlay */}
-                <div className={`absolute inset-0 ${feature.bgColor} opacity-80 group-hover:opacity-90 transition-opacity duration-500`}></div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-                
-                {/* Content */}
-                <div className="relative z-10 p-8">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 mb-6 rounded-full bg-gradient-to-br ${feature.color} transition-transform duration-500 group-hover:scale-110`}>
-                    <feature.icon className="text-black" size={30} />
-                  </div>
-                  
-                  <h3 className="text-2xl font-serif font-bold text-amber-400 mb-4">
-                    {feature.title}
-                  </h3>
-                  
-                  <p className="text-cream leading-relaxed mb-6">
-                    {feature.description}
-                  </p>
-                  
-                  <motion.div 
-                    className="flex items-center gap-2 text-amber-400 text-sm font-medium"
-                    whileHover={{ x: 5 }}
-                  >
-                    <span>Learn More</span>
-                    <ArrowRight size={16} />
-                  </motion.div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Signature Experiences Section with enhanced UI/UX */}
+      <SignatureExperiences />
       
       {/* About/Legacy Section */}
       <section className="py-24 bg-black/30 relative overflow-hidden z-10">
