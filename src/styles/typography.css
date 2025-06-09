@@ -1,0 +1,89 @@
+/* Advanced typography styles for Reeves Fine Dining */
+
+/* Elegant heading styles */
+.heading-display {
+  font-family: 'Honest Script Bold', serif;
+  letter-spacing: 0;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.heading-serif {
+  font-family: 'Honest Script', serif;
+  letter-spacing: 0;
+  line-height: 1.25;
+  font-weight: normal;
+}
+
+.heading-accent {
+  font-family: 'Honest Script', serif;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+/* Text styles */
+.text-elegant {
+  font-family: 'Cormorant Garamond', serif;
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.text-refined {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.6;
+}
+
+/* Premium display text */
+.text-luxury {
+  font-family: 'Honest Script', serif;
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1.4;
+}
+
+/* Menu item styling */
+.menu-item-title {
+  font-family: 'Honest Script', serif;
+  font-weight: normal;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+.menu-item-description {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+  line-height: 1.7;
+}
+
+/* Special text treatments */
+.uppercase-spaced {
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  font-weight: 500;
+}
+
+/* Numerals and prices */
+.price-tag {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* Quote styling */
+.elegant-quote {
+  font-family: 'Honest Script', serif;
+  font-weight: normal;
+  line-height: 1.6;
+  letter-spacing: 0;
+}
+
+/* Button and CTA text */
+.cta-text {
+  font-family: 'Honest Script', serif;
+  letter-spacing: 0;
+  font-weight: normal;
+}

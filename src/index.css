@@ -1,6 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&display=swap');
+/* Honest Script custom font import */
+@font-face {
+  font-family: 'Honest Script';
+  src: url('/fonts/HonestScript-Regular.woff2') format('woff2'),
+       url('/fonts/HonestScript-Regular.woff') format('woff'),
+       url('/fonts/HonestScript-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Honest Script Bold';
+  src: url('/fonts/HonestScript-Bold.woff2') format('woff2'),
+       url('/fonts/HonestScript-Bold.woff') format('woff'),
+       url('/fonts/HonestScript-Bold.ttf') format('truetype');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
 @import './styles/mobile-animations.css';
 @import './styles/admin-mobile.css';
+@import './styles/typography.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -73,11 +94,44 @@
   body {
     @apply bg-background text-foreground font-sans;
     font-family: 'Inter', system-ui, sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.01em;
     padding-top: 0; /* Remove default padding as we handle it with the h-[73px] div */
   }
   
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Honest Script', serif;
+    letter-spacing: 0;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-weight: bold;
+    font-family: 'Honest Script Bold', serif;
+  }
+  
+  h2 {
+    font-weight: bold;
+  }
+  
+  .font-alt {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 500;
+  }
+  
+  .font-accent {
+    font-family: 'Honest Script', serif;
+    letter-spacing: 0.01em;
+  }
+  
+  .font-light-serif {
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 300;
+    letter-spacing: 0.01em;
+  }
+
+  p {
+    line-height: 1.7;
   }
 }
 
@@ -165,8 +219,8 @@
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
-  }
-  
+
+  }  
   .animate-gradient {
     background-size: 200% 200%;
     animation: gradient-shift 6s ease infinite;

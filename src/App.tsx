@@ -8,7 +8,6 @@ import { auth } from './lib/firebase';
 import { useEffect } from "react";
 import Navigation from './components/Navigation';
 import Footer from './components/Footer';
-import MobileReservationFAB from './components/MobileReservationFAB';
 import Home from "./pages/Home";
 import Menu from "./pages/Menu";
 import Gallery from "./pages/Gallery";
@@ -63,7 +62,7 @@ const App = () => {
               <>
                 <TitleBar /> {/* TitleBar only for public routes */}
                 <Navigation />
-                <div className="pb-16 md:pb-0"> {/* Add bottom padding for mobile navigation */}
+                <div className="pb-0"> {/* Removed mobile bottom padding */}
                   <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/menu" element={<Menu />} />
@@ -75,7 +74,6 @@ const App = () => {
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </div>
-                <MobileReservationFAB />
                 <Footer />
               </>
             } />

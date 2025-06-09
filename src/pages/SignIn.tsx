@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   signInWithEmailAndPassword, 
   signInWithPopup, 
@@ -10,7 +10,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
-import { Mail, Lock, Eye, EyeOff, User, ChevronRight, Loader2, X } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, User, ChevronRight, Loader2, X, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -31,6 +31,8 @@ const SignIn = () => {
   const emailInputRef = useRef<HTMLInputElement>(null);
   const passwordInputRef = useRef<HTMLInputElement>(null);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const backgroundVideoRef = useRef<HTMLVideoElement>(null);
+  const audioFeedbackRef = useRef<HTMLAudioElement>(null);
   
   // Navigation
   const navigate = useNavigate();
@@ -44,27 +46,45 @@ const SignIn = () => {
     } else {
       emailInputRef.current?.focus();
     }
+
+    // Optional: Play background video with reduced opacity
+    if (backgroundVideoRef.current) {
+      backgroundVideoRef.current.play().catch(err => console.log('Video autoplay prevented:', err));
+    }
   }, [isSignUp, resetPassword]);
+
+  // Play subtle audio feedback for interactions
+  const playFeedback = (type: 'success' | 'error' | 'click' = 'click') => {
+    if (audioFeedbackRef.current) {
+      audioFeedbackRef.current.currentTime = 0;
+      audioFeedbackRef.current.volume = type === 'error' ? 0.2 : 0.1;
+      audioFeedbackRef.current.play().catch(err => console.log('Audio feedback prevented:', err));
+    }
+  };
 
   // Validate form input
   const validateForm = () => {
     if (isSignUp && !name.trim()) {
       setError('Please enter your name');
+      playFeedback('error');
       return false;
     }
     
     if (!email.trim()) {
       setError('Please enter your email');
+      playFeedback('error');
       return false;
     }
 
     if (!resetPassword && !password.trim()) {
       setError('Please enter your password');
+      playFeedback('error');
       return false;
     }
 
     if (isSignUp && password.length < 6) {
       setError('Password must be at least 6 characters');
+      playFeedback('error');
       return false;
     }
 
@@ -77,6 +97,7 @@ const SignIn = () => {
     
     if (!validateForm()) return;
 
+    playFeedback('click');
     setIsLoading(true);
     setError('');
     
@@ -84,6 +105,7 @@ const SignIn = () => {
       if (resetPassword) {
         await sendPasswordResetEmail(auth, email);
         setResetSent(true);
+        playFeedback('success');
       } else if (isSignUp) {
         // Create new account
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -96,15 +118,18 @@ const SignIn = () => {
           profileImage: null
         });
         
+        playFeedback('success');
         // Navigate to dashboard
-        navigate('/dashboard');
+        navigate('/user-dashboard');
       } else {
         // Sign in existing user
         await signInWithEmailAndPassword(auth, email, password);
-        navigate('/dashboard');
+        playFeedback('success');
+        navigate('/user-dashboard');
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
+      playFeedback('error');
       
       // Display user-friendly error messages
       if (error.code === 'auth/user-not-found') {
@@ -127,6 +152,7 @@ const SignIn = () => {
 
   // Handle Google sign in
   const handleGoogleSignIn = async () => {
+    playFeedback('click');
     setIsLoading(true);
     setError('');
     
@@ -148,10 +174,12 @@ const SignIn = () => {
         });
       }
       
+      playFeedback('success');
       // Navigate to dashboard
-      navigate('/dashboard');
+      navigate('/user-dashboard');
     } catch (error) {
       console.error('Google sign in error:', error);
+      playFeedback('error');
       setError('Failed to sign in with Google. Please try again.');
     } finally {
       setIsLoading(false);
@@ -160,12 +188,14 @@ const SignIn = () => {
 
   // Handle form mode toggle
   const toggleFormMode = () => {
+    playFeedback();
     setIsSignUp(!isSignUp);
     setError('');
   };
 
   // Handle reset password mode
   const toggleResetPassword = () => {
+    playFeedback();
     setResetPassword(!resetPassword);
     setResetSent(false);
     setError('');
@@ -178,319 +208,359 @@ const SignIn = () => {
     exit: { opacity: 0, y: -20, transition: { duration: 0.4 } }
   };
 
-  // Animated background particles
-  const Particles = () => {
-    return (
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {Array.from({ length: 50 }).map((_, index) => (
-          <motion.div
-            key={index}
-            className="absolute w-1 h-1 md:w-2 md:h-2 rounded-full bg-amber-400/20"
-            initial={{ 
-              x: Math.random() * 100 + '%', 
-              y: Math.random() * 100 + '%', 
-              scale: Math.random() * 0.5 + 0.5,
-              opacity: Math.random() * 0.5 
-            }}
+  return (
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden py-12 px-4 sm:px-6 lg:px-8">
+      {/* Hidden audio for feedback */}
+      <audio ref={audioFeedbackRef} src="/sounds/soft-click.mp3" />
+      
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-10">
+        {/* Premium video background */}
+        <video 
+          ref={backgroundVideoRef}
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 object-cover w-full h-full opacity-30"
+        >
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-serving-wine-in-a-glass-27790-large.mp4" type="video/mp4" />
+        </video>
+        
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-black via-charcoal/90 to-black z-0"></div>
+        
+        {/* Animated particles */}
+        <div className="absolute inset-0 overflow-hidden">
+          {Array.from({ length: 50 }).map((_, index) => (
+            <motion.div
+              key={index}
+              className="absolute w-1 h-1 md:w-2 md:h-2 rounded-full bg-amber-400/20"
+              initial={{ 
+                x: Math.random() * 100 + '%', 
+                y: Math.random() * 100 + '%', 
+                scale: Math.random() * 0.5 + 0.5,
+                opacity: Math.random() * 0.5 
+              }}
+              animate={{ 
+                y: [null, Math.random() * -30 - 10], 
+                opacity: [null, 0] 
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: Math.random() * 10 + 10,
+                delay: Math.random() * 5,
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+      </div>
+      
+      {/* Animated SVG wave */}
+      <div className="absolute bottom-0 left-0 right-0 z-0 opacity-30">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320">
+          <motion.path
+            fill="#d97706"
+            fillOpacity="0.5"
+            d="M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,176C672,181,768,139,864,128C960,117,1056,139,1152,165.3C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
             animate={{ 
-              y: [null, Math.random() * -30 - 10], 
-              opacity: [null, 0] 
-            }}
-            transition={{ 
-              repeat: Infinity, 
-              duration: Math.random() * 10 + 10,
-              delay: Math.random() * 5,
-              ease: "easeInOut"
+              d: [
+                "M0,160L48,144C96,128,192,96,288,106.7C384,117,480,171,576,176C672,181,768,139,864,128C960,117,1056,139,1152,165.3C1248,192,1344,224,1392,240L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z",
+                "M0,192L48,181.3C96,171,192,149,288,149.3C384,149,480,171,576,165.3C672,160,768,128,864,122.7C960,117,1056,139,1152,176C1248,213,1344,267,1392,293.3L1440,320L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              ],
+              transition: {
+                repeat: Infinity,
+                repeatType: "reverse",
+                duration: 8,
+                ease: "easeInOut"
+              }
             }}
           />
-        ))}
+        </svg>
       </div>
-    );
-  };
 
-  return (
-    <div className="min-h-screen bg-charcoal flex items-center justify-center px-4 py-16 relative overflow-hidden">
-      {/* Ambient particles */}
-      <Particles />
-      
-      {/* Decorative ambient gradients */}
-      <div className="absolute top-[20%] left-[10%] w-72 h-72 bg-amber-600/10 rounded-full blur-3xl opacity-30" />
-      <div className="absolute bottom-[10%] right-[5%] w-80 h-80 bg-amber-600/10 rounded-full blur-3xl opacity-40" />
-      
-      <div className="container mx-auto flex items-center justify-center">
-        <div className="w-full max-w-md relative z-10">
-          {/* Logo section */}
-          <motion.div 
-            className="flex justify-center mb-8"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
-          >
-            <div className="text-center">
-              <h1 className="text-4xl font-serif text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-600 font-bold">
-                Reeves Fine Dining
-              </h1>
-              <p className="text-cream/80 mt-2">
-                {resetPassword ? 'Reset your password' : isSignUp ? 'Create your account' : 'Welcome back'}
-              </p>
-            </div>
-          </motion.div>
-          
-          {/* Auth form card */}
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="bg-black/40 backdrop-blur-lg border border-amber-600/20 rounded-2xl p-8 shadow-xl overflow-hidden"
-          >
-            <AnimatePresence mode="wait">
-              {resetSent ? (
-                <motion.div
-                  key="resetSuccess"
-                  variants={formVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="text-center py-8"
+      {/* Form area */}
+      <div className="relative z-10 max-w-md w-full">
+        {/* Logo/branding with animation */}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-8"
+        >
+          <Link to="/" className="inline-block">
+            <h2 className="text-4xl md:text-5xl font-serif text-amber-400">Reeves</h2>
+            <div className="w-32 h-1 mt-2 rounded-full bg-gradient-to-r from-amber-600 to-amber-400 mx-auto" />
+            <p className="mt-2 text-cream/80 text-sm">Fine Dining Experience</p>
+          </Link>
+        </motion.div>
+
+        {/* Glassmorphism card */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+          className="backdrop-blur-md bg-black/40 border border-amber-600/30 p-8 rounded-2xl shadow-2xl overflow-hidden"
+          whileHover={{ boxShadow: "0 0 25px 2px rgba(217, 119, 6, 0.2)" }}
+        >
+          {/* Glowing border effect */}
+          <div className="absolute inset-0 -z-10">
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-r from-amber-600/10 via-amber-400/20 to-amber-600/10 blur-xl"></div>
+          </div>
+
+          <AnimatePresence mode="wait">
+            {resetPassword ? (
+              <motion.div
+                key="resetPassword"
+                variants={formVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="relative"
+              >
+                <button 
+                  onClick={toggleResetPassword} 
+                  className="absolute -top-2 -left-2 text-amber-400 hover:text-amber-300 transition-colors"
                 >
-                  <div className="w-16 h-16 rounded-full bg-amber-600/20 border border-amber-600/30 flex items-center justify-center mx-auto mb-6">
-                    <Mail className="text-amber-400" size={28} />
+                  <ArrowLeft size={20} />
+                </button>
+
+                <h3 className="text-2xl font-serif font-bold text-center text-amber-400 mb-6">Reset Password</h3>
+                
+                {resetSent ? (
+                  <div className="text-center">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", damping: 10 }}
+                      className="w-16 h-16 bg-amber-600/20 rounded-full flex items-center justify-center mx-auto mb-4"
+                    >
+                      <Mail size={32} className="text-amber-400" />
+                    </motion.div>
+                    
+                    <p className="text-cream mb-6">
+                      If an account exists with this email, we've sent password reset instructions.
+                    </p>
+                    
+                    <Button 
+                      onClick={toggleResetPassword}
+                      className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-black border-none"
+                    >
+                      Back to Sign In
+                    </Button>
                   </div>
-                  
-                  <h3 className="text-xl font-medium text-amber-400 mb-3">
-                    Check Your Email
-                  </h3>
-                  
-                  <p className="text-cream/80 mb-6">
-                    We've sent a password reset link to:<br />
-                    <span className="text-amber-300 font-medium">{email}</span>
-                  </p>
-                  
-                  <Button
-                    onClick={toggleResetPassword}
-                    className="bg-amber-600 hover:bg-amber-700 text-black px-6 py-5 rounded-lg font-semibold transition-colors w-full"
-                  >
-                    Return to Sign In
-                  </Button>
-                </motion.div>
-              ) : (
-                <motion.form
-                  key={`form-${isSignUp ? 'signup' : 'signin'}-${resetPassword ? 'reset' : 'normal'}`}
-                  onSubmit={handleEmailSignIn}
-                  variants={formVariants}
-                  initial="hidden"
-                  animate="visible"
-                  exit="exit"
-                  className="space-y-6"
-                >
-                  {/* Form title */}
-                  <h2 className="text-2xl font-serif font-bold text-amber-400 mb-6">
-                    {resetPassword ? 'Reset Password' : isSignUp ? 'Create Account' : 'Sign In'}
-                  </h2>
-                  
-                  {/* Name input (sign up only) */}
-                  {isSignUp && (
-                    <div className="space-y-1">
-                      <label htmlFor="name" className="block text-sm font-medium text-cream">
-                        Full Name
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <User size={18} className="text-amber-400/70" />
-                        </div>
-                        <input
-                          id="name"
-                          ref={nameInputRef}
-                          type="text"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className={`w-full bg-black/30 border ${activeIndex === 0 ? 'border-amber-400' : 'border-amber-600/30'} 
-                            text-cream pl-10 pr-4 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-colors
-                          `}
-                          placeholder="Your full name"
-                          onFocus={() => setActiveIndex(0)}
-                          onBlur={() => setActiveIndex(-1)}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  {/* Email input */}
-                  <div className="space-y-1">
-                    <label htmlFor="email" className="block text-sm font-medium text-cream">
-                      Email Address
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        <Mail size={18} className="text-amber-400/70" />
+                ) : (
+                  <form onSubmit={handleEmailSignIn}>
+                    <div className="mb-6 relative group">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-amber-400/70">
+                        <Mail size={18} />
                       </div>
                       <input
-                        id="email"
                         ref={emailInputRef}
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className={`w-full bg-black/30 border ${activeIndex === 1 ? 'border-amber-400' : 'border-amber-600/30'} 
-                          text-cream pl-10 pr-4 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-colors
-                        `}
-                        placeholder="your@email.com"
-                        onFocus={() => setActiveIndex(1)}
-                        onBlur={() => setActiveIndex(-1)}
+                        placeholder="Enter your email"
+                        className="floating-input w-full bg-black/60 border border-amber-600/30 text-cream pl-10 pr-4 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-colors"
+                        required
                       />
                     </div>
+                    
+                    {error && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: -10 }} 
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-red-400 text-sm mb-6"
+                      >
+                        {error}
+                      </motion.div>
+                    )}
+                    
+                    <Button
+                      type="submit"
+                      disabled={isLoading}
+                      className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-black border-none h-12 font-medium"
+                    >
+                      {isLoading ? (
+                        <span className="flex items-center justify-center">
+                          <Loader2 size={18} className="mr-2 animate-spin" />
+                          Sending...
+                        </span>
+                      ) : (
+                        <span className="flex items-center justify-center">
+                          <span>Send Reset Link</span>
+                          <ChevronRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        </span>
+                      )}
+                    </Button>
+                  </form>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key={isSignUp ? "signup" : "signin"}
+                variants={formVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <h3 className="text-2xl font-serif font-bold text-center text-amber-400 mb-6">
+                  {isSignUp ? 'Create Account' : 'Welcome Back'}
+                </h3>
+                
+                <form onSubmit={handleEmailSignIn}>
+                  {/* Name input - only for signup */}
+                  {isSignUp && (
+                    <div className="mb-5 relative group">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-amber-400/70 transition-all group-focus-within:text-amber-400">
+                        <User size={18} />
+                      </div>
+                      <input
+                        ref={nameInputRef}
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Your name"
+                        className="floating-input form-input-hover w-full bg-black/60 border border-amber-600/30 text-cream pl-10 pr-4 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-all"
+                      />
+                    </div>
+                  )}
+                  
+                  {/* Email input */}
+                  <div className="mb-5 relative group">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-amber-400/70 transition-all group-focus-within:text-amber-400">
+                      <Mail size={18} />
+                    </div>
+                    <input
+                      ref={emailInputRef}
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="Email address"
+                      className="floating-input form-input-hover w-full bg-black/60 border border-amber-600/30 text-cream pl-10 pr-4 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-all"
+                      required
+                    />
                   </div>
                   
-                  {/* Password input (except for reset password mode) */}
-                  {!resetPassword && (
-                    <div className="space-y-1">
-                      <label htmlFor="password" className="block text-sm font-medium text-cream">
-                        Password {isSignUp && <span className="text-amber-400/60 text-xs font-normal">• min 6 characters</span>}
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                          <Lock size={18} className="text-amber-400/70" />
-                        </div>
-                        <input
-                          id="password"
-                          ref={passwordInputRef}
-                          type={showPassword ? "text" : "password"}
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className={`w-full bg-black/30 border ${activeIndex === 2 ? 'border-amber-400' : 'border-amber-600/30'} 
-                            text-cream pl-10 pr-12 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-colors
-                          `}
-                          placeholder="••••••••"
-                          onFocus={() => setActiveIndex(2)}
-                          onBlur={() => setActiveIndex(-1)}
-                        />
-                        <button
-                          type="button"
-                          className="absolute inset-y-0 right-0 flex items-center px-4 text-cream/60 hover:text-amber-400 transition-colors"
-                          onClick={() => setShowPassword(!showPassword)}
-                        >
-                          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                        </button>
-                      </div>
+                  {/* Password input */}
+                  <div className="mb-2 relative group">
+                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-amber-400/70 transition-all group-focus-within:text-amber-400">
+                      <Lock size={18} />
+                    </div>
+                    <input
+                      ref={passwordInputRef}
+                      type={showPassword ? "text" : "password"}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="Password"
+                      className="floating-input form-input-hover w-full bg-black/60 border border-amber-600/30 text-cream pl-10 pr-10 py-3 rounded-lg focus:border-amber-400 focus:outline-none transition-all"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        playFeedback();
+                        setShowPassword(!showPassword);
+                      }}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-amber-400/70 hover:text-amber-400 transition-colors"
+                    >
+                      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    </button>
+                  </div>
+                  
+                  {/* Forgot password link */}
+                  {!isSignUp && (
+                    <div className="mb-6 text-right">
+                      <button
+                        type="button"
+                        onClick={toggleResetPassword}
+                        className="text-amber-400 hover:text-amber-300 text-sm transition-colors focus:outline-none"
+                      >
+                        Forgot password?
+                      </button>
                     </div>
                   )}
                   
                   {/* Error message */}
-                  <AnimatePresence>
-                    {error && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        className="bg-red-900/30 border border-red-500/30 text-red-200 rounded-lg px-4 py-2 text-sm flex items-center gap-2"
-                      >
-                        <X size={16} />
-                        <span>{error}</span>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  {error && (
+                    <motion.div 
+                      initial={{ opacity: 0, y: -10 }} 
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-red-900/20 border border-red-400/30 rounded px-3 py-2 text-red-400 text-sm mb-6 flex items-center"
+                    >
+                      <X size={14} className="mr-2 flex-shrink-0" />
+                      <span>{error}</span>
+                    </motion.div>
+                  )}
                   
-                  {/* Auth buttons */}
-                  <div className="pt-2">
-                    <button
+                  {/* Submit button with magnetic hover effect */}
+                  <motion.div 
+                    className="mb-6 group"
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    <Button
                       type="submit"
                       disabled={isLoading}
-                      className={`w-full bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-black px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                      className="w-full bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-black border-none h-12 font-medium group-hover:shadow-lg group-hover:shadow-amber-600/20 transition-all"
                     >
                       {isLoading ? (
-                        <>
-                          <Loader2 className="animate-spin mr-2" size={18} />
-                          <span>Processing...</span>
-                        </>
+                        <span className="flex items-center justify-center">
+                          <Loader2 size={18} className="mr-2 animate-spin" />
+                          {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                        </span>
                       ) : (
-                        <>
-                          <span>{resetPassword ? 'Send Reset Link' : isSignUp ? 'Create Account' : 'Sign In'}</span>
-                          <ChevronRight size={18} className="ml-2" />
-                        </>
+                        <span className="flex items-center justify-center">
+                          <span>{isSignUp ? 'Create Account' : 'Sign In'}</span>
+                          <ChevronRight size={18} className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        </span>
                       )}
-                    </button>
-                    
-                    {!resetPassword && (
-                      <>
-                        <div className="flex items-center my-6">
-                          <div className="flex-1 h-px bg-amber-600/20"></div>
-                          <span className="px-3 text-cream/60 text-sm">or</span>
-                          <div className="flex-1 h-px bg-amber-600/20"></div>
-                        </div>
-                        
-                        <button
-                          type="button"
-                          onClick={handleGoogleSignIn}
-                          disabled={isLoading}
-                          className="w-full bg-black/30 border border-amber-600/30 hover:border-amber-400 text-cream px-6 py-3 rounded-lg font-medium transition-all flex items-center justify-center group"
-                        >
-                          <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
-                            <path
-                              fill="currentColor"
-                              d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                              className="text-blue-500"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                              className="text-green-500"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                              className="text-yellow-500"
-                            />
-                            <path
-                              fill="currentColor"
-                              d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                              className="text-red-500"
-                            />
-                          </svg>
-                          Continue with Google
-                        </button>
-                      </>
-                    )}
+                    </Button>
+                  </motion.div>
+                  
+                  {/* Google Sign In */}
+                  <div className="relative mb-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t border-amber-600/20"></div>
+                    </div>
+                    <div className="relative flex justify-center text-xs">
+                      <span className="px-2 bg-black/40 text-cream/70">Or continue with</span>
+                    </div>
                   </div>
                   
-                  {/* Toggle auth modes */}
-                  <div className="text-center text-sm pt-3">
-                    {resetPassword ? (
-                      <button 
-                        type="button" 
-                        onClick={toggleResetPassword} 
-                        className="text-amber-400 hover:text-amber-300 transition-colors"
-                      >
-                        Back to sign in
-                      </button>
-                    ) : (
-                      <>
-                        {!isSignUp && (
-                          <button
-                            type="button"
-                            onClick={toggleResetPassword}
-                            className="text-cream/70 hover:text-amber-400 transition-colors mb-2 block w-full"
-                          >
-                            Forgot your password?
-                          </button>
-                        )}
-                        <span className="text-cream/70">
-                          {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-                          {' '}
-                          <button
-                            type="button"
-                            onClick={toggleFormMode}
-                            className="text-amber-400 hover:text-amber-300 transition-colors font-medium"
-                          >
-                            {isSignUp ? 'Sign In' : 'Sign Up'}
-                          </button>
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </motion.form>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        </div>
+                  <motion.button
+                    type="button"
+                    onClick={handleGoogleSignIn}
+                    disabled={isLoading}
+                    className="w-full flex items-center justify-center gap-2 bg-black/60 border border-amber-600/30 text-cream py-3 px-4 rounded-lg hover:bg-amber-600/10 hover:border-amber-500/50 transition-colors"
+                    whileHover={{ y: -2, boxShadow: "0 5px 15px -3px rgba(217, 119, 6, 0.2)" }}
+                    whileTap={{ y: 0 }}
+                  >
+                    <svg width="18" height="18" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+                      <path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"/>
+                      <path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"/>
+                      <path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"/>
+                      <path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"/>
+                    </svg>
+                    <span>{isSignUp ? 'Sign up with Google' : 'Sign in with Google'}</span>
+                  </motion.button>
+                </form>
+                
+                {/* Toggle between signin/signup */}
+                <div className="mt-6 text-center">
+                  <button
+                    type="button"
+                    onClick={toggleFormMode}
+                    className="text-amber-400 hover:text-amber-300 text-sm transition-colors focus:outline-none"
+                  >
+                    {isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Create one"}
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </div>
   );

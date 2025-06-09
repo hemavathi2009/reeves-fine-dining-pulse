@@ -491,20 +491,6 @@ const Reservations = () => {
       <div className="container mx-auto px-6 py-12 relative">
         <Particles />
         
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-16 relative z-10"
-        >
-          <h1 className="text-6xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-600 mb-6">
-            Reserve Your Table
-          </h1>
-          <p className="text-xl text-cream max-w-3xl mx-auto leading-relaxed">
-            Secure your place for an unforgettable culinary journey.
-            Let us prepare the perfect setting for your dining experience.
-          </p>
-        </motion.div>
-
         {/* Progress bar for multistep form */}
         {!isSubmitted && (
           <motion.div 
@@ -927,8 +913,8 @@ const Reservations = () => {
                             type="hidden"
                             {...register('seatingPreference', { required: 'Please select seating' })}
                           />
-                          {validationErrors.seatingPreference && (
-                            <p className="text-red-400 text-sm mt-1 animate-pulse">{validationErrors.seatingPreference}</p>
+                          {errors.seatingPreference && (
+                            <p className="text-red-400 text-sm mt-1 animate-pulse">{errors.seatingPreference.message}</p>
                           )}
                         </div>
                         

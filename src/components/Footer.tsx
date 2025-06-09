@@ -12,7 +12,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative">
+    <footer className="relative hidden md:block"> {/* Hide on mobile, show on md screens and up */}
       {/* Gradient top border */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-600/50 to-transparent"></div>
       

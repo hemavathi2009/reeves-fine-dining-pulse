@@ -27,6 +27,13 @@ module.exports = {
         },
         // ...existing code...
       },
+      fontFamily: {
+        'serif': ['Playfair Display', 'serif'],
+        'sans': ['Inter', 'system-ui', 'sans-serif'],
+        'display': ['Cormorant Garamond', 'serif'],
+        'accent': ['Marcellus', 'serif'],
+        'alt': ['Raleway', 'sans-serif'],
+      },
       // ...existing code...
     },
   },

@@ -1,0 +1,69 @@
+/* Import premium fonts */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+
+/* Replace the problematic Honest Script font with alternative elegant script fonts */
+@font-face {
+  font-family: 'Elegant Script';
+  src: url('https://fonts.googleapis.com/css2?family=Pinyon+Script&display=swap');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Your existing CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Enhance typography with better defaults */
+  html {
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    text-rendering: optimizeLegibility;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading tracking-tighter;
+  }
+
+  h1 {
+    @apply text-4xl md:text-5xl lg:text-6xl font-medium;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl font-medium;
+    letter-spacing: -0.015em;
+  }
+
+  h3 {
+    @apply text-2xl md:text-3xl font-medium;
+    letter-spacing: -0.01em;
+  }
+
+  p {
+    @apply font-body leading-relaxed;
+  }
+
+  .elegant-text {
+    @apply font-script text-gold;
+  }
+
+  .caption {
+    @apply font-alt text-sm tracking-wide uppercase;
+  }
+  
+  /* Your existing CSS variables */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --charcoal: 240 10% 3.9%;
+    --cream: 36 100% 99%;
+    --gold: 38 90% 50%;
+    
+    /* ...other existing variables... */
+  }
+}

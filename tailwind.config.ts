@@ -1,5 +1,5 @@
-
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -59,7 +59,13 @@ export default {
 			},
 			fontFamily: {
 				'serif': ['Playfair Display', 'serif'],
-				'sans': ['Inter', 'system-ui', 'sans-serif'],
+				'sans': ['Montserrat', 'Inter', 'system-ui', 'sans-serif'],
+				'display': ['Playfair Display', 'serif'],
+				'accent': ['Cormorant Garamond', 'serif'],
+				'alt': ['Cormorant Garamond', 'serif'],
+				'script': ['Pinyon Script', 'cursive'],
+				'body': ['Montserrat', 'system-ui', 'sans-serif'],
+				'heading': ['Playfair Display', 'serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -90,5 +96,5 @@ export default {
 			}
 		}
 	},
-	plugins: [require("tailwindcss-animate")],
+	plugins: [tailwindcssAnimate],
 } satisfies Config;
