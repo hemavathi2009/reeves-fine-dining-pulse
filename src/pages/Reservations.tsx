@@ -10,6 +10,7 @@ import confetti from 'canvas-confetti';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
+import SeatingGallery from '@/components/reservation/SeatingGallery';
 
 interface ReservationForm {
   name: string;
@@ -181,15 +182,67 @@ const Reservations = () => {
   
   // Seating options
   const seatingOptions = [
-    { id: 'window', label: 'Window View', icon: <MapPin size={18} /> },
-    { id: 'private', label: 'Private Room', icon: <Users size={18} /> },
-    { id: 'bar', label: 'Chef\'s Bar', icon: <User size={18} /> },
-    { id: 'outdoor', label: 'Outdoor Patio', icon: <MoonStar size={18} /> },
+    { 
+      id: 'window', 
+      label: 'Window View', 
+      icon: <MapPin size={18} />,
+      description: 'Enjoy panoramic views of the city while dining',
+      image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80'
+    },
+    { 
+      id: 'private', 
+      label: 'Private Room', 
+      icon: <Users size={18} />,
+      description: 'Intimate space for gatherings and special moments',
+      image: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80'
+    },
+    { 
+      id: 'bar', 
+      label: 'Chef\'s Bar', 
+      icon: <User size={18} />,
+      description: 'Watch our chefs create culinary masterpieces',
+      image: 'https://images.unsplash.com/photo-1581349485608-9469926a8e5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80'
+    },
+    { 
+      id: 'outdoor', 
+      label: 'Outdoor Patio', 
+      icon: <MoonStar size={18} />,
+      description: 'Al fresco dining under the stars',
+      image: 'https://images.unsplash.com/photo-1544124499-58912cbddaad?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80'
+    },
   ];
   
   // Occasion options
   const occasionOptions = [
     "Birthday", "Anniversary", "Date Night", "Business Dinner", "Special Celebration", "None"
+  ];
+  
+  // Add the gallery images array for the seating gallery component
+  const seatingGalleryImages = [
+    {
+      id: 'window',
+      src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
+      label: 'Window View',
+      description: 'Enjoy breathtaking views of the city skyline while you dine in our premium window seating, perfect for romantic evenings or special occasions.'
+    },
+    {
+      id: 'private',
+      src: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
+      label: 'Private Room',
+      description: 'Our elegant private dining rooms offer an intimate atmosphere for groups of 6-12 guests, complete with dedicated wait staff and customized menus.'
+    },
+    {
+      id: 'bar',
+      src: 'https://images.unsplash.com/photo-1581349485608-9469926a8e5e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
+      label: 'Chef\'s Bar',
+      description: 'Experience culinary artistry up close at our Chef\'s Bar. Watch our master chefs prepare your dishes and engage in conversation about the cuisine.'
+    },
+    {
+      id: 'outdoor',
+      src: 'https://images.unsplash.com/photo-1544124499-58912cbddaad?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80',
+      label: 'Outdoor Patio',
+      description: 'Dine under the stars in our lush outdoor patio, featuring ambient lighting, gentle heaters for cooler evenings, and a sophisticated garden atmosphere.'
+    }
   ];
   
   // Form submission handler
@@ -232,8 +285,7 @@ const Reservations = () => {
       // Trigger confetti celebration
       if (confettiCanvasRef.current) {
         const myConfetti = confetti.create(confettiCanvasRef.current, {
-          resize: true,
-          useWorker: true
+          resize: true
         });
         
         myConfetti({
@@ -255,6 +307,25 @@ const Reservations = () => {
   // Calendar date helper
   const isDateSelected = (date: Date) => {
     return selectedDate && isSameDay(date, selectedDate);
+  };
+  
+  // Check if date is in the past
+  const isPastDate = (date: Date) => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date < today;
+  };
+
+  // Get current month days
+  const getCurrentMonthDays = (year: number, month: number) => {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const days: Date[] = [];
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+      days.push(new Date(year, month, i));
+    }
+    
+    return days;
   };
   
   // Particle animation component
@@ -285,8 +356,85 @@ const Reservations = () => {
     );
   };
 
+  // Reset reservation form to initial state
+  const resetReservation = () => {
+    setIsSubmitted(false);
+    setCurrentStep(1);
+    setProgress(25);
+    setSelectedDate(null);
+    setHoveredTime(null);
+    setSelectedSeating(null);
+    setAnimateError(false);
+    setReservationDetails(null);
+    reset(); // Reset the form data using react-hook-form's reset function
+  };
+
+  // Calendar states
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  
+  // Navigate months
+  const prevMonth = () => {
+    if (currentMonth === 0) {
+      setCurrentMonth(11);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+  
+  const nextMonth = () => {
+    if (currentMonth === 11) {
+      setCurrentMonth(0);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+  
+  // Get days for current month view
+  const daysInMonth = getCurrentMonthDays(currentYear, currentMonth);
+  
+  // Get day names for header
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  
+  // Get month name
+  const monthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' });
+
+  // Add an ambiance images component with professionally styled images
+  const AmbianceImages = () => {
+    return (
+      <div className="hidden md:block absolute inset-0 -z-10 opacity-15">
+        <div className="absolute top-0 right-0 w-1/3 h-1/2">
+          <img 
+            src="https://images.unsplash.com/photo-1559339352-11d035aa65de?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80" 
+            alt="Ambiance" 
+            className="w-full h-full object-cover rounded-bl-3xl"
+          />
+        </div>
+        <div className="absolute top-1/3 left-0 w-1/4 h-1/2">
+          <img 
+            src="https://images.unsplash.com/photo-1424847651672-bf20a4b0982b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80" 
+            alt="Ambiance" 
+            className="w-full h-full object-cover rounded-tr-3xl"
+          />
+        </div>
+        <div className="absolute bottom-0 right-1/4 w-1/4 h-1/3">
+          <img 
+            src="https://images.unsplash.com/photo-1578474846511-04ba529f0b88?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1200&q=80" 
+            alt="Ambiance" 
+            className="w-full h-full object-cover rounded-tl-3xl"
+          />
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-charcoal pt-20 overflow-x-hidden">
+      <AmbianceImages />
+      
       {/* Background ambient audio */}
       <audio ref={audioRef} src="/ambient-restaurant.mp3" loop />
       
@@ -309,6 +457,37 @@ const Reservations = () => {
         )}
       </button>
       
+      {/* Hero Section with Professional Restaurant Image */}
+      <div className="relative h-[50vh] md:h-[60vh] overflow-hidden">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2000&q=80"
+            alt="Fine dining table setting"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-charcoal/70 to-charcoal"></div>
+        </div>
+        
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="text-center px-6 max-w-4xl"
+          >
+            <h1 className="text-6xl md:text-7xl font-serif font-bold text-amber-400 mb-6">
+              Reserve Your Table
+            </h1>
+            <div className="w-32 h-0.5 bg-amber-400/70 mx-auto mb-6"></div>
+            <p className="text-xl text-cream/90 max-w-3xl mx-auto leading-relaxed">
+              Secure your place for an unforgettable culinary journey.
+              Let us prepare the perfect setting for your dining experience.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
       <div className="container mx-auto px-6 py-12 relative">
         <Particles />
         
@@ -341,7 +520,10 @@ const Reservations = () => {
                 </span>
               ))}
             </div>
-            <Progress value={progress} className="h-2 bg-amber-900/30" indicatorClassName="bg-gradient-to-r from-amber-400 to-amber-600" />
+            <Progress 
+              value={progress} 
+              className="h-2 bg-amber-900/30" 
+            />
           </motion.div>
         )}
 
@@ -360,6 +542,16 @@ const Reservations = () => {
               {/* Success animation */}
               <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-amber-900/20 to-transparent z-0"></div>
+                
+                {/* Add an elegant background image for the confirmation page */}
+                <div className="absolute inset-0 -z-10 opacity-20">
+                  <img
+                    src="https://images.unsplash.com/photo-1600565193348-f74bd3c7ccdf?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80"
+                    alt="Fine dining celebration"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
                 {Array.from({ length: 8 }).map((_, i) => (
                   <motion.div
                     key={i}
@@ -449,7 +641,7 @@ const Reservations = () => {
                   
                   <div className="pt-6">
                     <Button
-                      onClick={() => setIsSubmitted(false)}
+                      onClick={resetReservation}
                       className="bg-amber-600 hover:bg-amber-700 text-black px-8 py-3 font-semibold rounded-full transition-colors"
                     >
                       Make Another Reservation
@@ -485,34 +677,68 @@ const Reservations = () => {
                             Select Your Date
                           </h2>
                           
-                          <div className="overflow-x-auto pb-4">
-                            <div className="flex gap-2 min-w-max">
-                              {availableDates.map((date, index) => {
+                          <div className="bg-black/20 border border-amber-600/20 rounded-lg p-4">
+                            <div className="flex justify-between items-center mb-4">
+                              <button 
+                                type="button" 
+                                onClick={prevMonth}
+                                className="p-2 rounded-full hover:bg-amber-600/20 text-amber-400"
+                              >
+                                <ChevronLeft size={20} />
+                              </button>
+                              <h3 className="text-xl font-medium text-cream">
+                                {monthName} {currentYear}
+                              </h3>
+                              <button 
+                                type="button" 
+                                onClick={nextMonth}
+                                className="p-2 rounded-full hover:bg-amber-600/20 text-amber-400"
+                              >
+                                <ChevronRight size={20} />
+                              </button>
+                            </div>
+                            
+                            <div className="grid grid-cols-7 gap-1 mb-1">
+                              {dayNames.map(day => (
+                                <div 
+                                  key={day} 
+                                  className="text-amber-400/70 text-center text-xs font-medium py-1"
+                                >
+                                  {day}
+                                </div>
+                              ))}
+                            </div>
+                            
+                            <div className="grid grid-cols-7 gap-1">
+                              {/* Empty spaces for days before start of month */}
+                              {Array.from({ length: new Date(currentYear, currentMonth, 1).getDay() }).map((_, i) => (
+                                <div key={`empty-${i}`} className="h-10"></div>
+                              ))}
+                              
+                              {daysInMonth.map(date => {
+                                const isDisabled = isPastDate(date);
                                 const isToday = isSameDay(date, new Date());
                                 const isSelected = isDateSelected(date);
                                 
                                 return (
                                   <motion.button
-                                    key={index}
+                                    key={date.getTime()}
                                     type="button"
-                                    whileHover={{ y: -5 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    onClick={() => handleDateSelect(date)}
-                                    className={`flex flex-col items-center p-4 rounded-lg transition-all ${
+                                    disabled={isDisabled}
+                                    whileHover={!isDisabled ? { scale: 1.1 } : {}}
+                                    whileTap={!isDisabled ? { scale: 0.95 } : {}}
+                                    onClick={() => !isDisabled && handleDateSelect(date)}
+                                    className={`h-10 rounded-md flex items-center justify-center transition-all ${
                                       isSelected
-                                        ? 'bg-amber-600 text-black'
-                                        : 'bg-black/30 border border-amber-600/20 hover:border-amber-400/40 text-cream'
+                                        ? 'bg-amber-600 text-black font-medium'
+                                        : isDisabled
+                                        ? 'bg-black/10 text-gray-500 cursor-not-allowed'
+                                        : isToday
+                                        ? 'border border-amber-400 text-amber-400 hover:bg-amber-600/20'
+                                        : 'hover:bg-amber-600/20 text-cream'
                                     }`}
                                   >
-                                    <span className="text-xs font-medium mb-1">
-                                      {date.toLocaleDateString('en-US', { weekday: 'short' })}
-                                    </span>
-                                    <span className={`text-2xl font-bold ${isToday && !isSelected ? 'text-amber-400' : ''}`}>
-                                      {date.getDate()}
-                                    </span>
-                                    <span className="text-xs opacity-80">
-                                      {date.toLocaleDateString('en-US', { month: 'short' })}
-                                    </span>
+                                    {date.getDate()}
                                   </motion.button>
                                 );
                               })}
@@ -626,9 +852,20 @@ const Reservations = () => {
                         className={cn("space-y-8", animateError && "animate-shake")}
                       >
                         <div>
-                          <h2 className="text-2xl font-serif font-bold text-amber-400 mb-6">
-                            Seating Preference
+                          <h2 className="text-2xl font-serif font-bold text-amber-400 mb-4 flex items-center gap-2">
+                            <span className="bg-amber-400 text-black w-8 h-8 rounded-full flex items-center justify-center font-mono">2</span>
+                            Choose Your Perfect Setting
                           </h2>
+                          
+                          {/* Add the SeatingGallery component */}
+                          <SeatingGallery 
+                            images={seatingGalleryImages}
+                            onSelect={handleSeatingSelect}
+                            selectedId={selectedSeating}
+                          />
+                          
+                          {/* Keep the existing seating options grid as alternative selection UI */}
+                          <h3 className="text-xl font-serif font-medium text-amber-400 mt-8 mb-4">All Seating Options</h3>
                           
                           <div className="grid md:grid-cols-4 gap-4">
                             {seatingOptions.map((option) => (
@@ -637,28 +874,46 @@ const Reservations = () => {
                                 whileHover={{ y: -5, backgroundColor: 'rgba(217, 119, 6, 0.15)' }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={() => handleSeatingSelect(option.id)}
-                                className={`cursor-pointer p-5 rounded-xl flex flex-col items-center justify-center text-center transition-all relative
+                                className={`cursor-pointer rounded-xl flex flex-col md:flex-row md:h-36 transition-all relative overflow-hidden
                                   ${selectedSeating === option.id 
-                                    ? 'bg-gradient-to-br from-amber-700/50 to-amber-900/50 border-2 border-amber-500'
+                                    ? 'bg-gradient-to-br from-amber-700/50 to-amber-900/50 border-2 border-amber-500 shadow-lg shadow-amber-700/20'
                                     : 'bg-black/20 border border-amber-600/20'
                                   }
                                 `}
                               >
-                                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3
-                                  ${selectedSeating === option.id
-                                    ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-black'
-                                    : 'bg-black/30 text-amber-400'
-                                  }
-                                `}>
-                                  {option.icon}
+                                {/* Image container */}
+                                <div className="relative w-full md:w-1/2 h-32 md:h-full overflow-hidden">
+                                  <img 
+                                    src={option.image} 
+                                    alt={option.label} 
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent" />
+                                  <div className={`absolute top-4 left-4 w-10 h-10 rounded-full flex items-center justify-center
+                                    ${selectedSeating === option.id
+                                      ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-black'
+                                      : 'bg-black/60 text-amber-400'
+                                    }
+                                  `}>
+                                    {option.icon}
+                                  </div>
                                 </div>
-                                <span className="font-medium text-lg text-cream">{option.label}</span>
+                                
+                                {/* Content */}
+                                <div className="p-5 flex flex-col justify-center flex-1">
+                                  <h3 className="text-xl font-semibold text-amber-400 mb-1">
+                                    {option.label}
+                                  </h3>
+                                  <p className="text-cream/80 text-sm">
+                                    {option.description}
+                                  </p>
+                                </div>
                                 
                                 {/* Selection indicator */}
                                 {selectedSeating === option.id && (
                                   <motion.div
                                     layoutId="seating-selection"
-                                    className="absolute inset-0 rounded-xl border-2 border-amber-400"
+                                    className="absolute inset-0 rounded-xl border-2 border-amber-400 z-10"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
@@ -672,6 +927,9 @@ const Reservations = () => {
                             type="hidden"
                             {...register('seatingPreference', { required: 'Please select seating' })}
                           />
+                          {validationErrors.seatingPreference && (
+                            <p className="text-red-400 text-sm mt-1 animate-pulse">{validationErrors.seatingPreference}</p>
+                          )}
                         </div>
                         
                         <div>

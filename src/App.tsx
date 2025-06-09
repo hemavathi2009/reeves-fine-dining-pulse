@@ -52,13 +52,16 @@ const App = () => {
         <Sonner />
         <div className="min-h-screen bg-charcoal text-cream">
           <ScrollToTop />
-          <TitleBar /> {/* Title Bar appears on all pages */}
           <Routes>
+            {/* Admin routes without TitleBar */}
             <Route path="/admin" element={
               user ? <AdminDashboard /> : <AdminLogin />
             } />
+            
+            {/* Public routes with TitleBar */}
             <Route path="/*" element={
               <>
+                <TitleBar /> {/* TitleBar only for public routes */}
                 <Navigation />
                 <div className="pb-16 md:pb-0"> {/* Add bottom padding for mobile navigation */}
                   <Routes>

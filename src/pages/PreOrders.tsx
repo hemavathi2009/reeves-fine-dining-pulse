@@ -583,23 +583,39 @@ const PreOrders = () => {
         style={{ width: '100vw', height: '100vh' }}
       />
       
+      {/* Hero Section with Professional Restaurant Image */}
+      <div className="relative h-[40vh] md:h-[50vh] overflow-hidden mb-10">
+        <div className="absolute inset-0 z-0">
+          <img 
+            src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2000&q=80"
+            alt="Gourmet food preparation"
+            className="w-full h-full object-cover brightness-125"
+          />
+          <div className="absolute inset-0 bg-black/40"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-charcoal"></div>
+        </div>
+        
+        <div className="absolute inset-0 flex items-center justify-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center px-6 max-w-4xl"
+          >
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold text-amber-400 mb-4">
+              Pre-Order Your Experience
+            </h1>
+            <div className="w-32 h-0.5 bg-amber-400/70 mx-auto mb-6"></div>
+            <p className="text-lg text-cream/90 max-w-3xl mx-auto">
+              Select your favorite dishes and reserve them for pickup at your convenience.
+              Our chef prepares each dish fresh to ensure the perfect culinary experience.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+      
       {/* Main Content */}
       <div className="max-w-7xl mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8"
-        >
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-serif font-bold text-amber-400 mb-4">
-            Pre-Order Your Experience
-          </h1>
-          <p className="text-lg text-cream/80 max-w-3xl mx-auto">
-            Select your favorite dishes and reserve them for pickup at your convenience.
-            Our chef prepares each dish fresh to ensure the perfect culinary experience.
-          </p>
-        </motion.div>
-        
         {/* Search and Filters */}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}

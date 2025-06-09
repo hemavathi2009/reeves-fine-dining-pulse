@@ -300,16 +300,14 @@ const Menu = () => {
         className="relative h-[70vh] bg-black flex items-center justify-center overflow-hidden"
       >
         <div className="absolute inset-0 z-0">
-          <video 
-            autoPlay 
-            muted 
-            loop
-            playsInline
-            className="w-full h-full object-cover opacity-50"
-          >
-            <source src="https://res.cloudinary.com/dobktsnix/video/upload/v1678968529/food-hero-bg.mp4" type="video/mp4" />
-          </video>
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-charcoal"></div>
+          {/* Replace video with professional image */}
+          <img 
+            src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
+            alt="Fine dining cuisine"
+            className="w-full h-full object-cover opacity-70 brightness-125"
+          />
+          {/* Reduced darkness of overlay */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-charcoal"></div>
         </div>
         
         <div className="container mx-auto px-6 z-10 text-center">

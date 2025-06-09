@@ -1,0 +1,96 @@
+/* Contact page specific animations */
+
+.particle {
+  position: absolute;
+  pointer-events: none;
+  transition: transform 0.5s ease-out;
+}
+
+.animate-shake {
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-5px); }
+  40%, 80% { transform: translateX(5px); }
+}
+
+.form-input-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-input-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -10px rgba(245, 158, 11, 0.3);
+}
+
+/* Floating label animations */
+.floating-label {
+  position: absolute;
+  pointer-events: none;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 16px;
+  transition: all 0.2s ease;
+  color: rgba(245, 158, 11, 0.7);
+}
+
+.floating-input:focus ~ .floating-label,
+.floating-input:not(:placeholder-shown) ~ .floating-label {
+  top: -8px;
+  left: 0;
+  font-size: 0.75rem;
+  color: #f59e0b;
+}
+
+/* Success checkmark animation */
+@keyframes check-circle-fill {
+  from {
+    stroke-dashoffset: 180;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.check-circle-animate {
+  stroke-dasharray: 180;
+  stroke-dashoffset: 180;
+  animation: check-circle-fill 0.6s ease-in-out forwards;
+}
+
+/* Ripple effect animation */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  animation: ripple 2s infinite ease-out;
+}
+
+/* Glowing effect for buttons and hover states */
+.hover-glow {
+  transition: all 0.2s ease;
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
+}
+
+/* Noise texture */
+.noise-texture {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.04;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}

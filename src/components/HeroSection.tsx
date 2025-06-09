@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import ReservationButton from '@/components/ui/ReservationButton';
 
 interface HeroSectionProps {
   title: string;
@@ -39,25 +40,27 @@ const HeroSection = ({
     <div className="relative h-screen overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-black/60 z-10"></div>
-        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/20 to-black/70 z-5"></div>
+        {/* Further reduced opacity from 40% to 30% for brighter background */}
+        <div className="absolute inset-0 bg-black/30 z-10"></div>
+        {/* Lightened gradient overlay even more */}
+        <div className="absolute inset-0 bg-gradient-to-b from-charcoal/5 to-black/50 z-5"></div>
         
-        {/* Higher quality background image */}
+        {/* Higher quality background image with increased brightness */}
         <img 
-          src="https://images.pexels.com/photos/696218/pexels-photo-696218.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1" 
+          src={backgroundImageSrc || "https://images.pexels.com/photos/696218/pexels-photo-696218.jpeg?auto=compress&cs=tinysrgb&w=1920&h=1080&dpr=1"} 
           alt="Fine dining atmosphere"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover brightness-125 contrast-105"
           loading="eager"
         />
         
-        {/* Video Fallback */}
+        {/* Video Fallback - Further increased brightness */}
         {videoSrc && !videoError && (
           <video 
             autoPlay 
             muted 
             loop 
             playsInline
-            className="object-cover h-full w-full"
+            className="object-cover h-full w-full brightness-125 contrast-105"
             onError={handleVideoError}
           >
             <source src={videoSrc} type="video/mp4" />
@@ -98,15 +101,8 @@ const HeroSection = ({
             transition={{ delay: 1.2, duration: 0.8 }}
             className="flex flex-col sm:flex-row justify-center gap-6"
           >
-            <Button 
-              size="lg" 
-              className="bg-amber-600 hover:bg-amber-700 text-black font-bold px-8 py-6 text-lg"
-              asChild
-            >
-              <Link to={primaryButtonLink}>
-                {primaryButtonText}
-              </Link>
-            </Button>
+            {/* Use the new ReservationButton for primary action */}
+            <ReservationButton variant="default" size="large" />
             
             <Button 
               variant="outline" 

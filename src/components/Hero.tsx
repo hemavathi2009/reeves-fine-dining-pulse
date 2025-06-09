@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { Link } from 'react-router-dom';
@@ -63,9 +62,10 @@ const Hero = () => {
             <img
               src={image.url}
               alt={image.title}
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover brightness-125 contrast-105 saturate-105"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
+            {/* Further reduced opacity for background gradient */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/5 to-black/40" />
           </motion.div>
         ))}
       </motion.div>
