@@ -663,42 +663,42 @@ const Reservations = () => {
                             Select Your Date
                           </h2>
                           
-                          <div className="bg-black/20 border border-amber-600/20 rounded-lg p-4">
-                            <div className="flex justify-between items-center mb-4">
+                          <div className="bg-gradient-to-br from-black/70 to-black/40 border border-amber-600/30 rounded-xl p-6 shadow-inner">
+                            <div className="flex justify-between items-center mb-6">
                               <button 
                                 type="button" 
                                 onClick={prevMonth}
-                                className="p-2 rounded-full hover:bg-amber-600/20 text-amber-400"
+                                className="p-2 rounded-full hover:bg-amber-600/20 text-amber-400 transition-colors duration-200"
                               >
-                                <ChevronLeft size={20} />
+                                <ChevronLeft size={24} />
                               </button>
-                              <h3 className="text-xl font-medium text-cream">
+                              <h3 className="text-2xl font-serif font-medium text-amber-300">
                                 {monthName} {currentYear}
                               </h3>
                               <button 
                                 type="button" 
                                 onClick={nextMonth}
-                                className="p-2 rounded-full hover:bg-amber-600/20 text-amber-400"
+                                className="p-2 rounded-full hover:bg-amber-600/20 text-amber-400 transition-colors duration-200"
                               >
-                                <ChevronRight size={20} />
+                                <ChevronRight size={24} />
                               </button>
                             </div>
                             
-                            <div className="grid grid-cols-7 gap-1 mb-1">
+                            <div className="grid grid-cols-7 gap-1 mb-2">
                               {dayNames.map(day => (
                                 <div 
                                   key={day} 
-                                  className="text-amber-400/70 text-center text-xs font-medium py-1"
+                                  className="text-amber-400/90 text-center text-sm font-medium py-2"
                                 >
                                   {day}
                                 </div>
                               ))}
                             </div>
                             
-                            <div className="grid grid-cols-7 gap-1">
+                            <div className="grid grid-cols-7 gap-2">
                               {/* Empty spaces for days before start of month */}
                               {Array.from({ length: new Date(currentYear, currentMonth, 1).getDay() }).map((_, i) => (
-                                <div key={`empty-${i}`} className="h-10"></div>
+                                <div key={`empty-${i}`} className="h-12"></div>
                               ))}
                               
                               {daysInMonth.map(date => {
@@ -711,20 +711,23 @@ const Reservations = () => {
                                     key={date.getTime()}
                                     type="button"
                                     disabled={isDisabled}
-                                    whileHover={!isDisabled ? { scale: 1.1 } : {}}
+                                    whileHover={!isDisabled ? { scale: 1.1, y: -3 } : {}}
                                     whileTap={!isDisabled ? { scale: 0.95 } : {}}
                                     onClick={() => !isDisabled && handleDateSelect(date)}
-                                    className={`h-10 rounded-md flex items-center justify-center transition-all ${
+                                    className={`h-12 w-12 mx-auto rounded-full flex items-center justify-center transition-all duration-200 relative ${
                                       isSelected
-                                        ? 'bg-amber-600 text-black font-medium'
+                                        ? 'bg-gradient-to-br from-amber-500 to-amber-600 text-black font-bold shadow-lg shadow-amber-700/30'
                                         : isDisabled
-                                        ? 'bg-black/10 text-gray-500 cursor-not-allowed'
+                                        ? 'bg-black/20 text-gray-600 cursor-not-allowed opacity-40'
                                         : isToday
-                                        ? 'border border-amber-400 text-amber-400 hover:bg-amber-600/20'
-                                        : 'hover:bg-amber-600/20 text-cream'
+                                        ? 'border border-amber-400 text-amber-300 hover:bg-amber-600/30'
+                                        : 'hover:bg-amber-600/20 text-cream hover:text-amber-200'
                                     }`}
                                   >
                                     {date.getDate()}
+                                    {isToday && !isSelected && (
+                                      <span className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-amber-400 rounded-full"></span>
+                                    )}
                                   </motion.button>
                                 );
                               })}
